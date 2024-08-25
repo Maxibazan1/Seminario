@@ -1,0 +1,292 @@
+.baskervville-sc-regular {
+    font-family: "Baskervville SC", serif;
+    font-weight: 400;
+    font-style: normal;
+  }
+
+body {
+    margin: auto;
+    padding: auto;
+}
+
+/*BARRA PRINCIPAL*/
+
+#header {
+    background-color: #000;
+    color: #fff;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between; 
+}
+
+#logo {
+    display: flex;
+    align-items: center;
+    height: 40px;
+}
+
+#buscador {
+    flex-grow: 1; 
+    display: flex;
+    justify-content: center; 
+}
+
+#barra_buscador {
+    width: 100%; 
+    max-width: 400px;
+    padding: 10px; 
+    font-size: 16px; 
+    border-radius: 10px;
+    border: 1px solid #ccc; 
+}
+
+#iconos {
+    display: flex;
+    align-items: center;
+}
+
+#iconos img {
+    height: 20px;
+    margin-left: 35px; 
+}
+
+/*NAVEGADOR CATEGORIAS*/
+
+#nav ul {
+    list-style: none;
+    display: flex;
+    justify-content: center; 
+    margin: 0;
+    padding: 25px;
+}
+
+#nav ul li {
+    margin: 0 50px;
+}
+
+#nav ul li a {
+    color: #000000;
+    text-decoration: none;
+    text-align: center;
+}
+
+#banner-envio p {
+    background-color: #141464;
+    color: #fff;
+    text-align: center;
+    padding: 15px;
+    font-size: 35px;
+}
+
+/*CARRUSEL MARCAS*/
+
+#carouselExampleControls .carousel-item {
+    height: 500px; 
+}
+  
+#carouselExampleControls .carousel-item img {
+    height: 100%;
+    object-fit: cover;
+    width: 100%;
+}
+
+/*LINEAS SEPARADORAS*/
+.custom-hr {
+    border: 0;
+    height: 2px;
+    background-color: #000000;
+    width: 80%; 
+    margin: 20px auto; 
+    opacity: 0.8;
+}
+
+/*RECOMENDACIONES*/
+
+#recomendaciones-productos {
+    padding: 20px;
+}
+
+#recomendaciones-productos h2 {
+    text-align: center;
+    color: #141464;
+    margin-bottom: 20px;
+}
+
+.owl-carousel .item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 10px; 
+}
+
+.producto-info {
+    border: 1px solid black; 
+    border-radius: 5px; 
+    padding: 10px;
+    background-color: #fff; 
+    box-shadow: 0 0 5px rgba(0,0,0,5); 
+}
+
+.producto-info img {
+    max-width: 100%;
+    height: auto;
+    border: 2px solid black; 
+    border-radius: 5px; 
+    margin-bottom: 10px;
+}
+
+.producto-info h4 {
+    margin: 0;
+    font-size: 30px;
+}
+
+.producto-info p {
+    margin: 0;
+    font-size: 25px;
+    color: #141464; 
+}
+
+
+/*BANNER PROMOCIONES*/
+
+/* Fondo del banner */
+.bg-light {
+    background-color: #000000 !important; /* Cambia el color de fondo del banner */
+    border-radius: 15px; /* Añade border-radius al contenedor */
+    overflow: hidden; /* Asegura que el contenido no se desborde del border-radius */
+}
+
+/* Color del texto */
+h1.display-4 {
+    color: #ffffff; /* Cambia el color del título */
+}
+
+p {
+    color: #ffffff; /* Cambia el color del texto normal */
+}
+
+/* Línea separadora */
+hr {
+    border-color: #ffffff; /* Cambia el color de la línea */
+}
+
+/* Botón */
+.btn-primary {
+    background-color: #141464; /* Cambia el color de fondo del botón */
+    border-color: #000000; /* Cambia el color del borde del botón */
+    border-radius: 10px; /* Añade border-radius al botón */
+}
+
+.btn-primary:hover {
+    background-color: #000000; /* Cambia el color de fondo del botón al pasar el mouse */
+    border-color: #141464; /* Cambia el color del borde del botón al pasar el mouse */
+}
+
+/* Imagen */
+.img-fluid {
+    border-radius: 15px; /* Añade border-radius a la imagen */
+    box-shadow: 0 4px 8px rgb(255, 255, 255); /* Añade una sombra con color personalizado */
+}
+
+
+
+/*FOOTER*/
+
+#footer {
+    background-color: #000000; 
+    color: #ffffff; 
+    padding: 20px 0;
+}
+
+#footer h5 {
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+#footer p {
+    margin: 0;
+    line-height: 1.5;
+}
+
+#footer iframe {
+    border: 0;
+    border-radius: 5px;
+}
+
+#social-icons a {
+    color: #ffffff;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+@media (max-width: 767.98px) {
+    #footer iframe {
+        height: 150px;
+    }
+}
+
+/*BOXES*/
+
+#login, #crearcuenta, #recuperarcontraseña {
+    background-color: #fff;
+    width: 40%; 
+    margin: 100px auto;
+    padding: 30px; 
+    box-shadow: 0px 0px 25px rgb(0, 0, 0);
+    border-radius: 8px; 
+    box-sizing: border-box; 
+}
+
+#login h2, #crearcuenta h2, #recuperarcontraseña h2{
+    font-size: 36px; 
+    color: #141464;
+    text-align: center;
+    margin-bottom: 20px; 
+}
+
+#login label, #crearcuenta label, #recuperarcontraseña label {
+    display: block;
+    text-align: left;
+    margin-top: 15px;
+    font-size: 16px; 
+}
+
+#login input, #crearcuenta input, #recuperarcontraseña input {
+    width: 100%; 
+    padding: 10px; 
+    border-radius: 5px; 
+    margin-bottom: 15px; 
+    border: 1px solid #ccc; 
+    box-sizing: border-box; 
+}
+
+#login button, #crearcuenta button, #recuperarcontraseña button {
+    width: 100%; 
+    padding: 10px; 
+    border-radius: 5px; 
+    border: none; 
+    background-color: #000000; 
+    color: #ffffff; 
+    font-size: 16px; 
+    cursor: pointer; 
+    text-align: center; 
+}
+
+#login button a, #crearcuenta a, #recuperarcontraseña a {
+    color: #ffffff; 
+    text-decoration: none; 
+}
+
+#crearnueva {
+    text-align: center; 
+    margin-top: 20px; 
+}
+
+#crearnueva a {
+    display: block;
+    color: #000000;
+    text-decoration: none;
+    margin-top: 10px; 
+}
