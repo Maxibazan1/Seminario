@@ -72,7 +72,7 @@ body {
 }
 
 #banner-envio p {
-    background-color: #141464;
+    background-color: #0D0638;
     color: #fff;
     text-align: center;
     padding: 15px;
@@ -109,7 +109,7 @@ body {
 
 #recomendaciones-productos h2 {
     text-align: center;
-    color: #141464;
+    color: #0D0638;
     margin-bottom: 20px;
 }
 
@@ -145,7 +145,7 @@ body {
 .producto-info p {
     margin: 0;
     font-size: 25px;
-    color: #141464; 
+    color: #0D0638; 
 }
 
 
@@ -174,14 +174,14 @@ hr {
 
 /* Botón */
 .btn-primary {
-    background-color: #141464; /* Cambia el color de fondo del botón */
+    background-color: #0D0638; /* Cambia el color de fondo del botón */
     border-color: #000000; /* Cambia el color del borde del botón */
     border-radius: 10px; /* Añade border-radius al botón */
 }
 
 .btn-primary:hover {
     background-color: #000000; /* Cambia el color de fondo del botón al pasar el mouse */
-    border-color: #141464; /* Cambia el color del borde del botón al pasar el mouse */
+    border-color: #0D0638; /* Cambia el color del borde del botón al pasar el mouse */
 }
 
 /* Imagen */
@@ -241,7 +241,7 @@ hr {
 
 #login h2, #crearcuenta h2, #recuperarcontraseña h2{
     font-size: 36px; 
-    color: #141464;
+    color: #0D0638;
     text-align: center;
     margin-bottom: 20px; 
 }
