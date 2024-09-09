@@ -229,7 +229,7 @@ hr {
 
 /*BOXES*/
 
-#login, #crearcuenta, #recuperarcontraseña {
+#login, #crearcuenta, #recuperarcontraseña, #cambiarcontraseña {
     background-color: #fff;
     width: 40%; 
     margin: 100px auto;
@@ -239,21 +239,21 @@ hr {
     box-sizing: border-box; 
 }
 
-#login h2, #crearcuenta h2, #recuperarcontraseña h2{
+#login h2, #crearcuenta h2, #recuperarcontraseña h2, #cambiarcontraseña h2{
     font-size: 36px; 
     color: #0D0638;
     text-align: center;
     margin-bottom: 20px; 
 }
 
-#login label, #crearcuenta label, #recuperarcontraseña label {
+#login label, #crearcuenta label, #recuperarcontraseña label, #cambiarcontraseña label {
     display: block;
     text-align: left;
     margin-top: 15px;
     font-size: 16px; 
 }
 
-#login input, #crearcuenta input, #recuperarcontraseña input {
+#login input, #crearcuenta input, #recuperarcontraseña input, #cambiarcontraseña input {
     width: 100%; 
     padding: 10px; 
     border-radius: 5px; 
@@ -262,7 +262,7 @@ hr {
     box-sizing: border-box; 
 }
 
-#login button, #crearcuenta button, #recuperarcontraseña button {
+#login button, #crearcuenta button, #recuperarcontraseña button, #cambiarcontraseña button {
     width: 100%; 
     padding: 10px; 
     border-radius: 5px; 
@@ -274,7 +274,7 @@ hr {
     text-align: center; 
 }
 
-#login button a, #crearcuenta a, #recuperarcontraseña a {
+#login button a, #crearcuenta a, #recuperarcontraseña a, #cambiarcontraseña a {
     color: #ffffff; 
     text-decoration: none; 
 }

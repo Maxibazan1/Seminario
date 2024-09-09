@@ -1,39 +1,37 @@
-window.addEventListener("load", () => {
-
+document.addEventListener("DOMContentLoaded", () => {
 
     /*CREAR CUENTA*/
+    const formCrearCuenta = document.getElementById('crearcuenta');
 
-    const form = document.getElementById('crearcuenta');
+    if (formCrearCuenta) {
+        formCrearCuenta.addEventListener('submit', async function(event) {
+            event.preventDefault();
 
-    // Validar existencia del formulario
-    if (form) {
-        form.addEventListener('submit', async function(event) {
-            event.preventDefault(); // Evita que se envíe el formulario automáticamente
+            const nombre = document.getElementById('nombre')?.value.trim() || '';
+            const apellido = document.getElementById('apellido')?.value.trim() || '';
+            const email = document.getElementById('email')?.value.trim() || '';
+            const aliasusuario = document.getElementById('aliasusuario')?.value.trim() || '';
+            const contrasena = document.getElementById('contrasena')?.value || '';
+            const confirmarcontrasena = document.getElementById('confirmarcontrasena')?.value || '';
 
-            // Capturar los valores ingresados
-            const nombre = document.getElementById('nombre').value;
-            const apellido = document.getElementById('apellido').value;
-            const email = document.getElementById('email').value;
-            const aliasusuario = document.getElementById('aliasusuario').value;
-            const contrasena = document.getElementById('contrasena').value;
-            const confirmarcontraseña = document.getElementById('confirmarcontraseña').value;
+            if (!nombre || !apellido || !email || !aliasusuario || !contrasena || !confirmarcontrasena) {
+                alert('Por favor, complete todos los campos');
+                return;
+            }
 
-            // Validar que las contraseñas coincidan
-            if (contrasena !== confirmarcontraseña) {
+            if (contrasena !== confirmarcontrasena) {
                 alert('Las contraseñas no coinciden');
                 return;
             }
 
-            // Crear objeto para enviar al servidor
             const ClienteParaActualizar = {
-                nombre: nombre,
-                apellido: apellido,
-                email: email,
+                nombre,
+                apellido,
+                email,
                 nombreusuario: aliasusuario,
                 contraseña: contrasena
             };
 
-            // Enviar los datos al servidor
             try {
                 const response = await fetch('/nuevousuario', {
                     method: 'POST',
@@ -43,14 +41,11 @@ window.addEventListener("load", () => {
                     body: JSON.stringify(ClienteParaActualizar)
                 });
 
-                if (!response.ok) {
-                    // Si la respuesta no es OK, lanzar un error
-                    const errorData = await response.json();
-                    throw new Error(errorData.result_message || 'Error en la petición');
-                }
-
                 const data = await response.json();
-                console.log('Respuesta del servidor:', data);
+
+                if (!response.ok) {
+                    throw new Error(data.result_message || 'Error en la petición');
+                }
 
                 if (data.result_estado === 'ok') {
                     alert('Cliente insertado con éxito.');
@@ -64,41 +59,125 @@ window.addEventListener("load", () => {
         });
     }
 
-
     /*LOGIN*/
+    const formLogin = document.getElementById('login');
+    if (formLogin) {
+        formLogin.addEventListener('submit', async function(event) {
+            event.preventDefault();
+        
+            const nombreusuario = document.getElementById('UsuarioLogin')?.value.trim() || '';
+            const contrasena = document.getElementById('ContrasenaLogin')?.value || '';
+        
+            if (!nombreusuario || !contrasena) {
+                alert('Por favor, ingrese nombre de usuario y contraseña');
+                return;
+            }
+        
+            const datosLogin = {
+                nombreusuario,
+                contraseña: contrasena
+            };
+        
+            try {
+                const response = await fetch('/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(datosLogin)
+                });
+        
+                const data = await response.json();
+        
+                if (!response.ok) {
+                    throw new Error(data.result_message || 'Error en la autenticación');
+                }
+        
+                if (data.result_estado === 'ok') {
+                    alert(`Bienvenido ${nombreusuario}`);
+                    window.location.href = 'index.html';
+                } else {
+                    alert(`Error: ${data.result_message}`);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert(`Error: ${error.message}`);
+            }
+        });
+    }
 
-    document.getElementById('login').addEventListener('submit', async function(event) {
+    /*RECUPERAR CONTRASEÑA*/
+    const formRecuperarContrasena = document.getElementById('recuperarContrasena');
+    if (formRecuperarContrasena) {
+        formRecuperarContrasena.addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const email = document.getElementById('email').value.trim();
+
+            alert(email);
+            try {
+                const response = await fetch('/recuperar-contrasena', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.result_message || 'Error en la solicitud de recuperación');
+                }
+
+                if (data.result_estado === 'ok') {
+                    alert('Se ha enviado un correo con instrucciones para recuperar tu contraseña.');
+                } else {
+                    alert(`Error: ${data.result_message}`);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert(`Error: ${error.message}`);
+            }
+        });
+    }
+
+/*CAMBIAR CONTRASEÑA*/
+const formCambiarContrasena = document.getElementById('cambiarContrasena');
+if (formCambiarContrasena) {
+    formCambiarContrasena.addEventListener('submit', async function(event) {
         event.preventDefault();
-    
-        const nombreusuario = document.getElementById('UsuarioLogin').value;
-        const contrasena = document.getElementById('ContrasenaLogin').value;
-    
-        const datosLogin = {
-            nombreusuario: nombreusuario,
-            contraseña: contrasena
-        };
-    
+
+        const nuevaContrasena = document.getElementById('nuevaContrasena').value.trim();
+        const confirmarContrasena = document.getElementById('confirmarContrasena').value.trim();
+
+        if (nuevaContrasena !== confirmarContrasena) {
+            alert('Las contraseñas no coinciden. Por favor, inténtalo de nuevo.');
+            return;
+        }
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token');
+
+        if (!token) {
+            alert('Token no válido. Por favor, solicita un nuevo enlace de recuperación.');
+            return;
+        }
+
         try {
-            const response = await fetch('/login', {
+            const response = await fetch('/cambiar-contrasena', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(datosLogin)
+                body: JSON.stringify({ token, nuevaContrasena })
             });
-    
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.result_message || 'Error en la autenticación');
-            }
-    
+
             const data = await response.json();
-            console.log('Respuesta del servidor:', data);
-    
+
             if (data.result_estado === 'ok') {
-                alert('Bienvenido ' + nombreusuario);
-                window.location.href = 'index.html';
-                // Redireccionar o realizar otra acción tras el login
+                alert('Tu contraseña ha sido cambiada exitosamente.');
+                window.location.href = 'login.html';
             } else {
                 alert(`Error: ${data.result_message}`);
             }
@@ -107,10 +186,6 @@ window.addEventListener("load", () => {
             alert(`Error: ${error.message}`);
         }
     });
-    
-
-
-
+}
 
 });
-
