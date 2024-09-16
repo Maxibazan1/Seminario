@@ -2,12 +2,13 @@
 
 const Mailjet = require('node-mailjet');
 
-// Configura Mailjet con tus credenciales
+// Mailjet
 const mailjet = new Mailjet({
   apiKey: 'ab2d2cee5a35da44e0d926674bdbd36a',
   apiSecret: 'c634830f2aca5c0ee4ebdfe2ee9eafd8'
 });
 
+const session = require('express-session');
 const express = require('express');
 const path = require('path');
 const mysql = require('mysql2');
@@ -19,6 +20,13 @@ const port = 3000;
 ServidorWeb.use(express.static(path.join(__dirname, 'Frontend')));
 ServidorWeb.use(express.json());
 ServidorWeb.use(express.urlencoded({ extended: false }));
+
+ServidorWeb.use(session({
+  secret: 'tu_secreto_aqui',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false } 
+}));
 
 // Conexión a la base de datos
 const connection = mysql.createConnection({
@@ -36,7 +44,6 @@ connection.connect((err) => {
   console.log('Conectado a la base de datos MySQL.');
 });
 
-// Ruta principal
 ServidorWeb.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'Frontend', 'index.html'));
 });
@@ -44,72 +51,146 @@ ServidorWeb.get('/', (req, res) => {
 /////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-ServidorWeb.post('/nuevousuario', (req, res) => {
-  const { nombre, apellido, email, nombreusuario, contraseña } = req.body;
 
-  // Consulta para verificar si el email o nombreusuario ya existen
+/*NUEVO USUARIO*/	
+
+ServidorWeb.post('/nuevousuario', async (req, res) => {
+  const { nombre, apellido, email, nombreusuario, contrasena } = req.body;
   const checkUserSql = 'SELECT COUNT(*) AS count FROM usuario WHERE Email = ? OR NombreUsuario = ?';
 
-  connection.query(checkUserSql, [email, nombreusuario], (err, results) => {
-    if (err) {
-      console.error('Error al verificar el email o nombre de usuario:', err);
-      res.status(500).json({
-        result_estado: 'error',
-        result_message: 'Error al verificar el email o nombre de usuario.',
-        result_rows: 0,
-        result_proceso: 'POST CLIENTE',
-        result_data: ''
-      });
-      return;
-    }
+  try {
+    const [results] = await connection.promise().query(checkUserSql, [email, nombreusuario]);
 
     if (results[0].count > 0) {
-      res.status(400).json({
+      return res.status(400).json({
         result_estado: 'error',
         result_message: 'El email o nombre de usuario ya está registrado.',
         result_rows: 0,
         result_proceso: 'POST CLIENTE',
         result_data: ''
       });
+    }
+
+    // Insertar usuario con estado pendiente
+    const insertSql = 'INSERT INTO usuario (Nombre, Apellido, Email, Contrasena, NombreUsuario, Estado) VALUES (?, ?, ?, ?, ?, "pendiente")';
+    const [insertResult] = await connection.promise().query(insertSql, [nombre, apellido, email, contrasena, nombreusuario]);
+
+    // Enviar correo de confirmación
+    const request = mailjet
+      .post("send", {'version': 'v3.1'})
+      .request({
+        "Messages":[
+          {
+            "From": {
+              "Email": "tiendarazer2024@gmail.com",
+              "Name": "Tienda Razer"
+            },
+            "To": [
+              {
+                "Email": email,
+                "Name": `${nombre} ${apellido}`
+              }
+            ],
+            "Subject": "Confirma tu cuenta",
+            "HTMLPart": `
+              <h1>Confirma tu cuenta en Tienda Razer</h1>
+              <p>Haz clic en el siguiente enlace para confirmar tu cuenta:</p>
+              <a href="http://localhost:3000/confirmar-cuenta?userId=${insertResult.insertId}">Confirmar cuenta</a>
+              <p>Este enlace expirará en 24 horas.</p>
+            `
+          }
+        ]
+      });
+
+    await request;
+
+    res.json({
+      result_estado: 'ok',
+      result_message: 'Usuario registrado. Por favor, confirma tu cuenta a través del correo electrónico enviado.',
+      result_rows: insertResult.affectedRows,
+      result_proceso: 'POST USUARIO',
+      result_data: insertResult.insertId
+    });
+
+  } catch (error) {
+    console.error('Error en el proceso de registro:', error);
+    res.status(500).json({
+      result_estado: 'error',
+      result_message: 'Error al procesar el registro.',
+      result_rows: 0,
+      result_proceso: 'POST USUARIO',
+      result_data: ''
+    });
+  }
+});
+
+ServidorWeb.get('/confirmar-cuenta', async (req, res) => {
+  const { userId } = req.query;
+
+  console.log('Query params recibidos:', req.query); // Log para depuración
+
+  if (!userId) {
+    return res.status(400).send('Falta el ID de usuario en la URL.');
+  }
+
+  try {
+    // Verificar que el usuario exista, independientemente de su estado
+    const [userResults] = await connection.promise().query(
+      'SELECT * FROM usuario WHERE ID = ?',
+      [userId]
+    );
+
+    if (userResults.length === 0) {
+      return res.status(404).send('Usuario no encontrado.');
+    }
+
+    const user = userResults[0];
+
+    if (user.Estado === 'activo') {
+      return res.status(400).send('La cuenta ya ha sido confirmada previamente.');
+    }
+
+    // Actualizar el estado del usuario a 'activo'
+    await connection.promise().query(
+      'UPDATE usuario SET Estado = "activo" WHERE ID = ?',
+      [userId]
+    );
+
+    res.redirect('/cuentaconfirmada.html');
+  } catch (error) {
+    console.error('Error al confirmar la cuenta:', error);
+    res.status(500).send(`Error al confirmar la cuenta: ${error.message}`);
+  }
+});
+
+
+/*MOSTRAR USUARIOS*/
+ServidorWeb.get('/mostrarusuarios', (req, res) => {
+  const sql = 'SELECT ID, Nombre, Apellido, NombreUsuario, Email, Estado FROM usuario';
+
+  connection.query(sql, (err, results) => {
+    if (err) {
+      console.error('Error al mostrar los usuarios:', err);
+      res.status(500).json({
+        result_estado: 'error', 
+        result_message: 'Error al mostrar los usuarios.',
+        result_data: []
+      });
       return;
     }
 
-    /*INSERCION USUARIO*/
-    const sql = 'INSERT INTO usuario (Nombre, Apellido, Email, Contrasena, NombreUsuario) VALUES (?, ?, ?, ?, ?)';
-
-    connection.query(sql, [nombre, apellido, email, contraseña, nombreusuario], (err, results) => {
-      if (err) {
-        console.error('Error al insertar en la base de datos:', err);
-        res.status(500).json({
-          result_estado: 'error',
-          result_message: err.message,
-          result_rows: 0,
-          result_proceso: 'POST USUARIO',
-          result_data: ''
-        });
-        return;
-      }
-
-      res.json({
-        result_estado: 'ok',
-        result_message: 'USUARIO Insertado',
-        result_rows: results.affectedRows,
-        result_proceso: 'POST USUARIO',
-        result_data: results.insertId
-      });
-    });
+    res.json(results); // Enviamos directamente el array de resultados
   });
 });
 
+
 /*LOGIN*/
-
 ServidorWeb.post('/login', (req, res) => {
-  const { nombreusuario, contraseña } = req.body;
+  const { nombreusuario, contrasena } = req.body;
 
-  // Consulta para verificar el usuario y contraseña
   const sql = 'SELECT * FROM usuario WHERE NombreUsuario = ? AND Contrasena = ?';
 
-  connection.query(sql, [nombreusuario, contraseña], (err, results) => {
+  connection.query(sql, [nombreusuario, contrasena], (err, results) => {
     if (err) {
       console.error('Error al verificar el login:', err);
       res.status(500).json({
@@ -121,14 +202,14 @@ ServidorWeb.post('/login', (req, res) => {
     }
 
     if (results.length > 0) {
-      // Si el usuario existe y la contraseña coincide
+      // Guardar el ID del usuario en la sesion
+      req.session.userId = results[0].ID;
       res.json({
         result_estado: 'ok',
         result_message: 'Login exitoso.',
-        result_data: results[0] // Puedes enviar información del usuario aquí
+        result_data: results[0] 
       });
     } else {
-      // Si no existe el usuario o la contraseña es incorrecta
       res.status(401).json({
         result_estado: 'error',
         result_message: 'Nombre de usuario o contraseña incorrectos.',
@@ -137,6 +218,7 @@ ServidorWeb.post('/login', (req, res) => {
     }
   });
 });
+
 
 ///RECUPERAR CONTRASEÑA///
 ServidorWeb.post('/recuperar-contrasena', async (req, res) => {
@@ -149,7 +231,6 @@ ServidorWeb.post('/recuperar-contrasena', async (req, res) => {
           result_data: ''
       });
   }
-
   try {
       // Verificar si el email existe en la base de datos
       const [results] = await connection.promise().query('SELECT * FROM usuario WHERE Email = ?', [email]);
@@ -161,15 +242,14 @@ ServidorWeb.post('/recuperar-contrasena', async (req, res) => {
               result_data: ''
           });
       }
-
-      // Generar token único
+      // Generar token unico
       const token = crypto.randomBytes(20).toString('hex');
-      const expirationTime = new Date(Date.now() + 3600000); // Token válido por 1 hora
+      const expirationTime = new Date(Date.now() + 3600000); // Token valido por 1 hora
 
       // Guardar el token en la base de datos
       await connection.promise().query('UPDATE usuario SET reset_token = ?, reset_token_expires = ? WHERE Email = ?', [token, expirationTime, email]);
 
-      // Enviar correo electrónico usando Mailjet
+      // Enviar correo electronico usando Mailjet
       const request = mailjet
         .post("send", {'version': 'v3.1'})
         .request({
@@ -219,7 +299,7 @@ ServidorWeb.post('/cambiar-contrasena', async (req, res) => {
   try {
     const { token, nuevaContrasena } = req.body;
 
-    // Verificar que el token sea válido y no haya expirado
+    // Verificar que el token sea valido y no haya expirado
     const [rows] = await connection.promise().query(
       'SELECT * FROM usuario WHERE reset_token = ? AND reset_token_expires > NOW()',
       [token]
@@ -234,8 +314,7 @@ ServidorWeb.post('/cambiar-contrasena', async (req, res) => {
     }
 
     const usuario = rows[0];
-
-    // Actualizar la contraseña y limpiar el token de recuperación
+    // Actualizar la contraseña y limpiar el token de recuperacion
     await connection.promise().query(
       'UPDATE usuario SET Contrasena = ?, reset_token = NULL, reset_token_expires = NULL WHERE ID = ?',
       [nuevaContrasena, usuario.ID]
@@ -254,6 +333,47 @@ ServidorWeb.post('/cambiar-contrasena', async (req, res) => {
       result_data: ''
     });
   }
+
+
+  
+  ServidorWeb.put('/actualizarusuario', async (req, res) => {
+    // Verificar si el usuario está autenticado
+    if (!req.session || !req.session.userId) {
+        return res.status(401).json({
+            result_estado: 'error',
+            result_message: 'Usuario no autenticado'
+        });
+    }
+
+    const { nombre, apellido, email, nombreusuario } = req.body;
+    const userId = req.session.userId;
+
+    const query = 'UPDATE usuario SET Nombre = ?, Apellido = ?, Email = ?, NombreUsuario = ? WHERE ID = ?';
+
+    try {
+        const [result] = await connection.promise().query(query, [nombre, apellido, email, nombreusuario, userId]);
+
+        if (result.affectedRows > 0) {
+            res.json({
+                result_estado: 'ok',
+                result_message: 'Datos actualizados correctamente'
+            });
+        } else {
+            res.status(404).json({
+                result_estado: 'error',
+                result_message: 'No se encontró el usuario para actualizar'
+            });
+        }
+    } catch (error) {
+        console.error('Error al actualizar usuario:', error);
+        res.status(500).json({
+            result_estado: 'error',
+            result_message: 'Error al actualizar los datos del usuario'
+        });
+    }
+});
+
+
 });
 
 

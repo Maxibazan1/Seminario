@@ -198,6 +198,11 @@ hr {
     background-color: #000000; 
     color: #ffffff; 
     padding: 20px 0;
+    position: static;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000; /* Asegura que el footer esté siempre por encima de otros elementos */
 }
 
 #footer h5 {
@@ -226,6 +231,12 @@ hr {
         height: 150px;
     }
 }
+
+/* Añadir un espacio en blanco al final del contenido principal para evitar que el footer oculte contenido */
+body {
+    padding-bottom: auto; /* Ajusta este valor según la altura de tu footer */
+}
+
 
 /*BOXES*/
 
@@ -289,4 +300,27 @@ hr {
     color: #000000;
     text-decoration: none;
     margin-top: 10px; 
+}
+
+.cuenta-confirmada {
+    background-color: #000000;
+    color: #00ff00;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0px 0px 25px rgb(0, 0, 0);
+
+}
+.cuenta-confirmada h1 {
+    font-family: 'Baskervville SC', serif;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+.cuenta-confirmada p {
+    color: #fff;
+}
+.cuenta-confirmada .btn-primary {
+    background-color: #ffffff;
+    border-color: #000000;
+    color: #222;
+    font-weight: bold;
 }
