@@ -15,45 +15,78 @@
 <body>
     <header id="header">
         <div id="logo">
-            <a href="index.html">
-                <img src="Imagenes/logo.png" alt="Logo" id="logo">
-            </a>
-        </div>        
+            <img src="Imagenes/logo.png" id="logo">
+        </div>
         <div id="iconos">
-            <a href="login.html">
-                <img src="Imagenes/usuario.png">
-            </a>
+                <a href="login.html">
+                    <img src="Imagenes/usuario.png">
+                </a>
             <img src="Imagenes/carrito.png">
         </div>
     </header>
+    <nav class="navbar navbar-expand-lg navbar-light bg-white" style="border: 2px solid black;">
+        <div class="container-fluid">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-center" id="navbarNavDropdown">
+                <ul class="navbar-nav text-center">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#" style="color: black;">Inicio</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: black;">
+                            Categorías
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink" style="border: 1px solid black;">
+                            <li><a class="dropdown-item text-center" href="#">Hombres</a></li>
+                            <li><a class="dropdown-item text-center" href="#">Mujeres</a></li>
+                            <li><a class="dropdown-item text-center" href="#">Niños</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" style="color: black;">Ofertas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" style="color: black;">Contacto</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-8 col-lg-6">
+                <h2 class="text-center mb-4">Datos de la Cuenta</h2>
+                <!-- Agregar aquí los campos para mostrar los datos de la cuenta -->
+            </div>
+        </div>
+    </div>
     
-
-    <footer id="footer">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-4 mb-3">
-                    <h5 class="text-uppercase">Nuestra Información</h5>
-                    <p><strong>Dirección:</strong> Peatonal Rivadavia 200, Catamarca, Argentina</p>
-                    <p><strong>Teléfono:</strong> +54 383 4809258</p>
-                    <p><strong>Email:</strong> razercontact@gmail.com</p>
-                </div>
-                    <div class="col-md-4 mb-3">
-                    <h5 class="text-uppercase">Ubicación</h5>
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d3507.373783209069!2d-65.7789584822012!3d-28.468287882746573!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1ses-419!2sar!4v1724608716111!5m2!1ses-419!2sar" width="100%" height="200" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-                </div>
-                    <div class="col-md-4 mb-3">
-                    <h5 class="text-uppercase">Seguinos</h5>
-                    <div id="social-icons" class="d-flex">
-                        <a href="" class="text-white me-3"><i class="fa-brands fa-facebook fa-2x"></i></a>
-                        <a href="" class="text-white me-3"><i class="fa-brands fa-instagram fa-2x"></i></a>
-                        <a href="" class="text-white"><i class="fa-brands fa-whatsapp fa-2x"></i></a>
-                    </div>
+    <footer id="footer" class="container-fluid">
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <h5 class="text-uppercase">Nuestra Información</h5>
+                <p><strong>Dirección:</strong> Peatonal Rivadavia 200, Catamarca, Argentina</p>
+                <p><strong>Teléfono:</strong> +54 383 4809258</p>
+                <p><strong>Email:</strong> razercontact@gmail.com</p>
+            </div>
+            <div class="col-md-4 mb-3">
+                <h5 class="text-uppercase">Ubicación</h5>
+                <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d3507.373783209069!2d-65.7789584822012!3d-28.468287882746573!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1ses-419!2sar!4v1724608716111!5m2!1ses-419!2sar" width="100%" height="200" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            </div>
+            <div class="col-md-4 mb-3">
+                <h5 class="text-uppercase">Seguinos</h5>
+                <div id="social-icons" class="d-flex">
+                    <a href="" class="text-white me-3"><i class="fa-brands fa-facebook fa-2x"></i></a>
+                    <a href="" class="text-white me-3"><i class="fa-brands fa-instagram fa-2x"></i></a>
+                    <a href="" class="text-white"><i class="fa-brands fa-whatsapp fa-2x"></i></a>
                 </div>
             </div>
-            <div class="row mt-4 border-top pt-3">
-                <div class="col text-center">
-                    <p>&copy; 2024 RAZER. Todos los derechos reservados.</p>
-                </div>
+        </div>
+        <div class="row mt-4 border-top pt-3">
+            <div class="col text-center">
+                <p>&copy; 2024 RAZER. Todos los derechos reservados.</p>
             </div>
         </div>
     </footer>

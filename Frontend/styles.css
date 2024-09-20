@@ -53,23 +53,7 @@ body {
 
 /*NAVEGADOR CATEGORIAS*/
 
-#nav ul {
-    list-style: none;
-    display: flex;
-    justify-content: center; 
-    margin: 0;
-    padding: 25px;
-}
 
-#nav ul li {
-    margin: 0 50px;
-}
-
-#nav ul li a {
-    color: #000000;
-    text-decoration: none;
-    text-align: center;
-}
 
 #banner-envio p {
     background-color: #0D0638;
@@ -239,68 +223,6 @@ body {
 
 
 /*BOXES*/
-
-#login, #crearcuenta, #recuperarcontraseña, #cambiarcontraseña {
-    background-color: #fff;
-    width: 40%; 
-    margin: 100px auto;
-    padding: 30px; 
-    box-shadow: 0px 0px 25px rgb(0, 0, 0);
-    border-radius: 8px; 
-    box-sizing: border-box; 
-}
-
-#login h2, #crearcuenta h2, #recuperarcontraseña h2, #cambiarcontraseña h2{
-    font-size: 36px; 
-    color: #0D0638;
-    text-align: center;
-    margin-bottom: 20px; 
-}
-
-#login label, #crearcuenta label, #recuperarcontraseña label, #cambiarcontraseña label {
-    display: block;
-    text-align: left;
-    margin-top: 15px;
-    font-size: 16px; 
-}
-
-#login input, #crearcuenta input, #recuperarcontraseña input, #cambiarcontraseña input {
-    width: 100%; 
-    padding: 10px; 
-    border-radius: 5px; 
-    margin-bottom: 15px; 
-    border: 1px solid #ccc; 
-    box-sizing: border-box; 
-}
-
-#login button, #crearcuenta button, #recuperarcontraseña button, #cambiarcontraseña button {
-    width: 100%; 
-    padding: 10px; 
-    border-radius: 5px; 
-    border: none; 
-    background-color: #000000; 
-    color: #ffffff; 
-    font-size: 16px; 
-    cursor: pointer; 
-    text-align: center; 
-}
-
-#login button a, #crearcuenta a, #recuperarcontraseña a, #cambiarcontraseña a {
-    color: #ffffff; 
-    text-decoration: none; 
-}
-
-#crearnueva {
-    text-align: center; 
-    margin-top: 20px; 
-}
-
-#crearnueva a {
-    display: block;
-    color: #000000;
-    text-decoration: none;
-    margin-top: 10px; 
-}
 
 .cuenta-confirmada {
     background-color: #000000;
