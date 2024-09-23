@@ -53,9 +53,9 @@ ServidorWeb.get('/', (req, res) => {
 
 
 /*NUEVO USUARIO*/	
-
 ServidorWeb.post('/nuevousuario', async (req, res) => {
-  const { nombre, apellido, email, nombreusuario, contrasena } = req.body;
+  const { nombre, apellido, email, nombreusuario, contrasena, direccionCompleta } = req.body; // Extraer direccionCompleta
+  
   const checkUserSql = 'SELECT COUNT(*) AS count FROM usuario WHERE Email = ? OR NombreUsuario = ?';
 
   try {
@@ -75,11 +75,31 @@ ServidorWeb.post('/nuevousuario', async (req, res) => {
     const insertSql = 'INSERT INTO usuario (Nombre, Apellido, Email, Contrasena, NombreUsuario, Estado) VALUES (?, ?, ?, ?, ?, "pendiente")';
     const [insertResult] = await connection.promise().query(insertSql, [nombre, apellido, email, contrasena, nombreusuario]);
 
-    // Enviar correo de confirmación
+    // Verificar si direccionCompleta tiene valores validos 
+    if (direccionCompleta && direccionCompleta.direccion && direccionCompleta.ciudad && direccionCompleta.provincia && direccionCompleta.codigoPostal) {
+      const insertDireccionSql = 'INSERT INTO direccion (UsuarioID, Direccion, Ciudad, Provincia, CodigoPostal) VALUES (?, ?, ?, ?, ?)';
+      await connection.promise().query(insertDireccionSql, [
+        insertResult.insertId,
+        direccionCompleta.direccion, 
+        direccionCompleta.ciudad, 
+        direccionCompleta.provincia, 
+        direccionCompleta.codigoPostal
+      ]);
+    } else {
+      return res.status(400).json({
+        result_estado: 'error',
+        result_message: 'Error: Datos de la dirección incompletos.',
+        result_rows: 0,
+        result_proceso: 'POST DIRECCION',
+        result_data: ''
+      });
+    }
+
+    // Enviar correo de confirmacion
     const request = mailjet
       .post("send", {'version': 'v3.1'})
       .request({
-        "Messages":[
+        "Messages": [
           {
             "From": {
               "Email": "tiendarazer2024@gmail.com",
@@ -124,6 +144,7 @@ ServidorWeb.post('/nuevousuario', async (req, res) => {
   }
 });
 
+
 ServidorWeb.get('/confirmar-cuenta', async (req, res) => {
   const { userId } = req.query;
 
@@ -164,7 +185,7 @@ ServidorWeb.get('/confirmar-cuenta', async (req, res) => {
 });
 
 
-/*MOSTRAR USUARIOS*/
+/*MOSTRAR LOS USUARIOS*/
 ServidorWeb.get('/mostrarusuarios', (req, res) => {
   const sql = 'SELECT ID, Nombre, Apellido, NombreUsuario, Email, Estado FROM usuario';
 
@@ -181,6 +202,42 @@ ServidorWeb.get('/mostrarusuarios', (req, res) => {
 
     res.json(results); // Enviamos directamente el array de resultados
   });
+});
+
+
+/* OBTENER USUARIO*/
+ServidorWeb.get('/obtenerusuario', async (req, res) => {
+  // Verificar si el usuario está autenticado
+  if (!req.session || !req.session.userId) {
+      return res.status(401).json({
+          result_estado: 'error',
+          result_message: 'Usuario no autenticado'
+      });
+  }
+
+  try {
+      const [userResults] = await connection.promise().query(
+          'SELECT Nombre, Apellido, Email, NombreUsuario FROM usuario WHERE ID = ?',
+          [req.session.userId] 
+      );
+
+      if (userResults.length === 0) {
+          return res.status(404).json({
+              result_estado: 'error',
+              result_message: 'Usuario no encontrado'
+          });
+      }
+      res.json({
+          result_estado: 'ok',
+          usuario: userResults[0]
+      });
+  } catch (error) {
+      console.error('Error al obtener los datos del usuario:', error);
+      res.status(500).json({
+          result_estado: 'error',
+          result_message: 'Error al obtener los datos del usuario'
+      });
+  }
 });
 
 
@@ -203,7 +260,8 @@ ServidorWeb.post('/login', (req, res) => {
 
     if (results.length > 0) {
       // Guardar el ID del usuario en la sesion
-      req.session.userId = results[0].ID;
+      req.session.userId = results[0].ID; // {{ edit_1 }}
+      console.log('ID del usuario que inició sesión:', req.session.userId);
       res.json({
         result_estado: 'ok',
         result_message: 'Login exitoso.',
@@ -335,7 +393,6 @@ ServidorWeb.post('/cambiar-contrasena', async (req, res) => {
   }
 
 
-  
   ServidorWeb.put('/actualizarusuario', async (req, res) => {
     // Verificar si el usuario está autenticado
     if (!req.session || !req.session.userId) {

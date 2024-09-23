@@ -82,7 +82,8 @@ CREATE TABLE `descuento` (
   `Descuento` decimal(5,2) DEFAULT NULL,
   `FechaExpiracion` date DEFAULT NULL,
   PRIMARY KEY (`ID`),
-  UNIQUE KEY `Codigo` (`Codigo`)
+  UNIQUE KEY `Codigo` (`Codigo`),
+  CONSTRAINT `fk_direccion_usuario` FOREIGN KEY (`ID`) REFERENCES `usuario` (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -107,12 +108,12 @@ CREATE TABLE `direccion` (
   `UsuarioID` int DEFAULT NULL,
   `Direccion` varchar(255) DEFAULT NULL,
   `Ciudad` varchar(100) DEFAULT NULL,
+  `Provincia` varchar(100) DEFAULT NULL,
   `CodigoPostal` varchar(20) DEFAULT NULL,
-  `Pais` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`ID`),
   KEY `UsuarioID` (`UsuarioID`),
   CONSTRAINT `` FOREIGN KEY (`UsuarioID`) REFERENCES `usuario` (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -121,6 +122,7 @@ CREATE TABLE `direccion` (
 
 LOCK TABLES `direccion` WRITE;
 /*!40000 ALTER TABLE `direccion` DISABLE KEYS */;
+INSERT INTO `direccion` VALUES (1,1,'Av Manuel Navarro 2737','Catamarca','Catamarca','4700');
 /*!40000 ALTER TABLE `direccion` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -396,6 +398,9 @@ CREATE TABLE `usuario` (
   `Email` varchar(100) DEFAULT NULL,
   `Contrasena` varchar(255) DEFAULT NULL,
   `NombreUsuario` varchar(150) DEFAULT NULL,
+  `reset_token` varchar(255) DEFAULT NULL,
+  `reset_token_expires` datetime DEFAULT NULL,
+  `Estado` enum('pendiente','activo') DEFAULT 'pendiente',
   PRIMARY KEY (`ID`),
   UNIQUE KEY `Email` (`Email`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -407,7 +412,7 @@ CREATE TABLE `usuario` (
 
 LOCK TABLES `usuario` WRITE;
 /*!40000 ALTER TABLE `usuario` DISABLE KEYS */;
-INSERT INTO `usuario` VALUES (1,'Félix Maximiliano','Bazán','fmbazan@institutosanmartin.edu.ar','123456','MaxiBazan1');
+INSERT INTO `usuario` VALUES (1,'Maximiliano','Bazan','fmbazan@institutosanmartin.edu.ar','123456','MaxiBazan1',NULL,NULL,'activo');
 /*!40000 ALTER TABLE `usuario` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -420,4 +425,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-08-26 18:21:10
+-- Dump completed on 2024-09-23 14:24:40
