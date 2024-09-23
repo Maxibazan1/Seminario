@@ -36,6 +36,11 @@ document.addEventListener("DOMContentLoaded", () => {
         formCambiarContrasena.addEventListener('submit', cambiarContrasena);
     }
 
+    const informacionPersonal = document.getElementById('informacion-personal'); // Verificar la existencia del div
+        if (informacionPersonal) {
+            obtenerUsuario(); // Invocar la función si el div existe
+        }
+
 });
 
 async function crearCuenta(event) {
@@ -44,12 +49,11 @@ async function crearCuenta(event) {
     const nombre = document.getElementById('nombre')?.value.trim() || '';
     const apellido = document.getElementById('apellido')?.value.trim() || '';
     const email = document.getElementById('email')?.value.trim() || '';
+    const contrasena = document.getElementById('contrasena')?.value.trim() || '';
+    const confirmarcontrasena = document.getElementById('confirmarcontrasena')?.value.trim() || '';
     const aliasusuario = document.getElementById('aliasusuario')?.value.trim() || '';
-    const contrasena = document.getElementById('contrasena')?.value || '';
-    const confirmarcontrasena = document.getElementById('confirmarcontrasena')?.value || '';
 
 
-    
     if (!nombre || !apellido || !email || !aliasusuario || !contrasena || !confirmarcontrasena) {
         alert('Por favor, complete todos los campos');
         return;
@@ -60,12 +64,26 @@ async function crearCuenta(event) {
         return;
     }
 
+    const direccionCompleta = {
+        direccion: document.getElementById('direccion')?.value.trim() || '',
+        ciudad: document.getElementById('ciudad')?.value.trim() || '',
+        provincia: document.getElementById('provincia')?.value.trim() || '',
+        codigoPostal: document.getElementById('codigoPostal')?.value.trim() || ''
+    };
+
+    // Asegúrate de que los campos de la dirección también estén completos
+    if (!direccionCompleta.direccion || !direccionCompleta.ciudad || !direccionCompleta.provincia || !direccionCompleta.codigoPostal) {
+        alert('Por favor, complete todos los campos de la dirección');
+        return;
+    }
+
     const ClienteParaActualizar = {
         nombre,
         apellido,
         email,
         nombreusuario: aliasusuario,
-        contrasena: contrasena
+        contrasena,
+        direccionCompleta // Envía el objeto direccionCompleta correctamente
     };
 
     try {
@@ -132,6 +150,29 @@ function cargarUsuarios() {
             tablaUsuarios.innerHTML = `<tr><td colspan="6" class="text-center">Error al cargar usuarios: ${error.message}</td></tr>`;
         });
 }
+
+async function obtenerUsuario() {
+    try {
+        const response = await fetch('/obtenerusuario');
+        if (!response.ok) {
+            throw new Error('Error en la red');
+        }
+        const data = await response.json();
+
+        if (data.result_estado === 'ok') {
+            document.getElementById('nombreInput').value = data.usuario.Nombre || '';
+            document.getElementById('apellidoInput').value = data.usuario.Apellido || '';
+            document.getElementById('emailInput').value = data.usuario.Email || '';
+            document.getElementById('usuarioInput').value = data.usuario.NombreUsuario || '';
+
+        } else {
+            console.error(data.result_message);
+        }
+    } catch (error) {
+        console.error('Error fetching user data:', error);
+    }
+}
+
 
 async function iniciarSesion(event) {
     event.preventDefault();

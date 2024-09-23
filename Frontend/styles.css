@@ -7,10 +7,10 @@
 body {
     margin: auto;
     padding: auto;
+    padding-bottom: auto;
 }
 
 /*BARRA PRINCIPAL*/
-
 #header {
     background-color: #000;
     color: #fff;
@@ -52,9 +52,6 @@ body {
 }
 
 /*NAVEGADOR CATEGORIAS*/
-
-
-
 #banner-envio p {
     background-color: #0D0638;
     color: #fff;
@@ -64,7 +61,6 @@ body {
 }
 
 /*CARRUSEL MARCAS*/
-
 #carouselExampleControls .carousel-item {
     height: 500px; 
 }
@@ -86,7 +82,6 @@ body {
 }
 
 /*RECOMENDACIONES*/
-
 #recomendaciones-productos {
     padding: 20px;
 }
@@ -134,50 +129,41 @@ body {
 
 
 /*BANNER PROMOCIONES*/
-
-/* Fondo del banner */
 .bg-light {
-    background-color: #000000 !important; /* Cambia el color de fondo del banner */
-    border-radius: 15px; /* Añade border-radius al contenedor */
-    overflow: hidden; /* Asegura que el contenido no se desborde del border-radius */
+    background-color: #000000 !important;
+    border-radius: 15px; 
+    overflow: hidden; 
 }
 
-/* Color del texto */
 h1.display-4 {
-    color: #ffffff; /* Cambia el color del título */
+    color: #ffffff; 
 }
 
 p {
-    color: #ffffff; /* Cambia el color del texto normal */
+    color: #ffffff; 
 }
 
-/* Línea separadora */
 hr {
-    border-color: #ffffff; /* Cambia el color de la línea */
+    border-color: #ffffff; 
 }
 
-/* Botón */
 .btn-primary {
-    background-color: #0D0638; /* Cambia el color de fondo del botón */
-    border-color: #000000; /* Cambia el color del borde del botón */
-    border-radius: 10px; /* Añade border-radius al botón */
-}
+    background-color: #0D0638;
+    border-color: #000000; 
+    border-radius: 10px;
+} 
 
 .btn-primary:hover {
-    background-color: #000000; /* Cambia el color de fondo del botón al pasar el mouse */
-    border-color: #0D0638; /* Cambia el color del borde del botón al pasar el mouse */
+    background-color: #000000; 
+    border-color: #0D0638; 
 }
-
-/* Imagen */
 .img-fluid {
-    border-radius: 15px; /* Añade border-radius a la imagen */
-    box-shadow: 0 4px 8px rgb(255, 255, 255); /* Añade una sombra con color personalizado */
+    border-radius: 15px; 
+    box-shadow: 0 4px 8px rgb(255, 255, 255); 
 }
-
 
 
 /*FOOTER*/
-
 #footer {
     background-color: #000000; 
     color: #ffffff; 
@@ -186,7 +172,7 @@ hr {
     bottom: 0;
     left: 0;
     width: 100%;
-    z-index: 1000; /* Asegura que el footer esté siempre por encima de otros elementos */
+    z-index: 1000;
 }
 
 #footer h5 {
@@ -216,14 +202,9 @@ hr {
     }
 }
 
-/* Añadir un espacio en blanco al final del contenido principal para evitar que el footer oculte contenido */
-body {
-    padding-bottom: auto; /* Ajusta este valor según la altura de tu footer */
-}
 
 
 /*BOXES*/
-
 .cuenta-confirmada {
     background-color: #000000;
     color: #00ff00;
