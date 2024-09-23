@@ -164,6 +164,10 @@ async function obtenerUsuario() {
             document.getElementById('apellidoInput').value = data.usuario.Apellido || '';
             document.getElementById('emailInput').value = data.usuario.Email || '';
             document.getElementById('usuarioInput').value = data.usuario.NombreUsuario || '';
+            document.getElementById('direccionInput').value = data.usuario.Direccion.Direccion || '';
+            document.getElementById('ciudadInput').value = data.usuario.Direccion.Ciudad || '';
+            document.getElementById('provinciaInput').value = data.usuario.Direccion.Provincia || '';
+            document.getElementById('codigoPostalInput').value = data.usuario.Direccion.CodigoPostal || '';
 
         } else {
             console.error(data.result_message);
