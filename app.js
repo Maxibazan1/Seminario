@@ -1,5 +1,4 @@
 /*CONEXIONES*/
-
 const Mailjet = require('node-mailjet');
 
 // Mailjet
@@ -13,13 +12,21 @@ const express = require('express');
 const path = require('path');
 const mysql = require('mysql2');
 const crypto = require('crypto');
+const userRoutes = require('./routes/userRoutes');
 
 const ServidorWeb = express();
 const port = 3000;
 
+ServidorWeb.use('/usuarios', userRoutes);
 ServidorWeb.use(express.static(path.join(__dirname, 'Frontend')));
 ServidorWeb.use(express.json());
 ServidorWeb.use(express.urlencoded({ extended: false }));
+
+
+ServidorWeb.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/index.html'));
+});
+
 
 ServidorWeb.use(session({
   secret: 'tu_secreto_aqui',
@@ -45,8 +52,10 @@ connection.connect((err) => {
 });
 
 ServidorWeb.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'Frontend', 'index.html'));
+  res.sendFile(path.join(__dirname, 'Frontend', 'interfaces', 'index.html'));
 });
+
+
 
 /////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
@@ -70,11 +79,9 @@ ServidorWeb.post('/nuevousuario', async (req, res) => {
         result_data: ''
       });
     }
-
     // Insertar usuario con estado pendiente
     const insertSql = 'INSERT INTO usuario (Nombre, Apellido, Email, Contrasena, NombreUsuario, Estado) VALUES (?, ?, ?, ?, ?, "pendiente")';
     const [insertResult] = await connection.promise().query(insertSql, [nombre, apellido, email, contrasena, nombreusuario]);
-
     // Verificar si direccionCompleta tiene valores validos 
     if (direccionCompleta && direccionCompleta.direccion && direccionCompleta.ciudad && direccionCompleta.provincia && direccionCompleta.codigoPostal) {
       const insertDireccionSql = 'INSERT INTO direccion (UsuarioID, Direccion, Ciudad, Provincia, CodigoPostal) VALUES (?, ?, ?, ?, ?)';
@@ -94,7 +101,6 @@ ServidorWeb.post('/nuevousuario', async (req, res) => {
         result_data: ''
       });
     }
-
     // Enviar correo de confirmacion
     const request = mailjet
       .post("send", {'version': 'v3.1'})
@@ -153,7 +159,6 @@ ServidorWeb.get('/confirmar-cuenta', async (req, res) => {
   if (!userId) {
     return res.status(400).send('Falta el ID de usuario en la URL.');
   }
-
   try {
     // Verificar que el usuario exista, independientemente de su estado
     const [userResults] = await connection.promise().query(
@@ -199,7 +204,6 @@ ServidorWeb.get('/mostrarusuarios', (req, res) => {
       });
       return;
     }
-
     res.json(results); // Enviamos directamente el array de resultados
   });
 });
@@ -209,36 +213,55 @@ ServidorWeb.get('/mostrarusuarios', (req, res) => {
 ServidorWeb.get('/obtenerusuario', async (req, res) => {
   // Verificar si el usuario está autenticado
   if (!req.session || !req.session.userId) {
-      return res.status(401).json({
-          result_estado: 'error',
-          result_message: 'Usuario no autenticado'
-      });
+    return res.status(401).json({
+      result_estado: 'error',
+      result_message: 'Usuario no autenticado'
+    });
   }
 
   try {
-      const [userResults] = await connection.promise().query(
-          'SELECT Nombre, Apellido, Email, NombreUsuario FROM usuario WHERE ID = ?',
-          [req.session.userId] 
-      );
+    // Realizamos un JOIN para obtener tanto los datos del usuario como los de la tabla direccion
+    const [userResults] = await connection.promise().query(
+      `SELECT u.Nombre, u.Apellido, u.Email, u.NombreUsuario, 
+              d.ID as DireccionID, d.Direccion, d.Ciudad, d.Provincia, d.CodigoPostal
+       FROM usuario u
+       LEFT JOIN direccion d ON u.ID = d.UsuarioID
+       WHERE u.ID = ?`,
+      [req.session.userId]
+    );
 
-      if (userResults.length === 0) {
-          return res.status(404).json({
-              result_estado: 'error',
-              result_message: 'Usuario no encontrado'
-          });
+    if (userResults.length === 0) {
+      return res.status(404).json({
+        result_estado: 'error',
+        result_message: 'Usuario no encontrado'
+      });
+    }
+
+    res.json({
+      result_estado: 'ok',
+      usuario: {
+        Nombre: userResults[0].Nombre,
+        Apellido: userResults[0].Apellido,
+        Email: userResults[0].Email,
+        NombreUsuario: userResults[0].NombreUsuario,
+        Direccion: {
+          ID: userResults[0].DireccionID,
+          Direccion: userResults[0].Direccion,
+          Ciudad: userResults[0].Ciudad,
+          Provincia: userResults[0].Provincia,
+          CodigoPostal: userResults[0].CodigoPostal
+        }
       }
-      res.json({
-          result_estado: 'ok',
-          usuario: userResults[0]
-      });
+    });
   } catch (error) {
-      console.error('Error al obtener los datos del usuario:', error);
-      res.status(500).json({
-          result_estado: 'error',
-          result_message: 'Error al obtener los datos del usuario'
-      });
+    console.error('Error al obtener los datos del usuario:', error);
+    res.status(500).json({
+      result_estado: 'error',
+      result_message: 'Error al obtener los datos del usuario'
+    });
   }
 });
+
 
 
 /*LOGIN*/
@@ -430,9 +453,7 @@ ServidorWeb.post('/cambiar-contrasena', async (req, res) => {
     }
 });
 
-
 });
-
 
 // Iniciar el servidor
 ServidorWeb.listen(port, () => {
