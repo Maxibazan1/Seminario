@@ -203,8 +203,7 @@ hr {
 }
 
 
-
-/*BOXES*/
+/*Cuenta confirmada*/
 .cuenta-confirmada {
     background-color: #000000;
     color: #00ff00;
@@ -226,4 +225,38 @@ hr {
     border-color: #000000;
     color: #222;
     font-weight: bold;
+}
+
+
+/* Filtrador */
+#contenedorproductos .card {
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s;
+}
+
+#contenedorproductos .card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.card-body {
+    text-align: center;
+}
+
+.list-group-item {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    margin-bottom: 10px;
+}
+
+.list-group-item h5 {
+    color: #0D0638;
+}
+
+.list-group-item ul li a {
+    text-decoration: none;
+    color: #333;
+}
+
+.list-group-item ul li a:hover {
+    color: #0D0638;
 }

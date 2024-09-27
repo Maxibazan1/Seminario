@@ -1,4 +1,5 @@
 /*CONEXIONES*/
+
 const Mailjet = require('node-mailjet');
 
 // Mailjet
@@ -19,18 +20,6 @@ const port = 3000;
 ServidorWeb.use(express.static(path.join(__dirname, 'Frontend')));
 ServidorWeb.use(express.json());
 ServidorWeb.use(express.urlencoded({ extended: false }));
-
-
-const multer = require('multer');
-const upload = multer({ dest: 'uploads/' }); // carpeta temporal para subir imágenes
-const cloudinary = require('cloudinary').v2;
-
-cloudinary.config({
-  cloud_name: 'dzxxndbzu',
-  api_key: '271516758949379',
-  api_secret: 'qsjuIzTP-MrDzqNX0JakC6u-ss0'
-});
-
 
 ServidorWeb.use(session({
   secret: 'tu_secreto_aqui',
@@ -55,15 +44,18 @@ connection.connect((err) => {
   console.log('Conectado a la base de datos MySQL.');
 });
 
+ServidorWeb.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'Frontend', 'index.html'));
+});
 
 /////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
 
 /*NUEVO USUARIO*/	
+
 ServidorWeb.post('/nuevousuario', async (req, res) => {
-  const { nombre, apellido, email, nombreusuario, contrasena, direccionCompleta } = req.body; // Extraer direccionCompleta
-  
+  const { nombre, apellido, email, nombreusuario, contrasena } = req.body;
   const checkUserSql = 'SELECT COUNT(*) AS count FROM usuario WHERE Email = ? OR NombreUsuario = ?';
 
   try {
@@ -78,33 +70,16 @@ ServidorWeb.post('/nuevousuario', async (req, res) => {
         result_data: ''
       });
     }
+
     // Insertar usuario con estado pendiente
     const insertSql = 'INSERT INTO usuario (Nombre, Apellido, Email, Contrasena, NombreUsuario, Estado) VALUES (?, ?, ?, ?, ?, "pendiente")';
     const [insertResult] = await connection.promise().query(insertSql, [nombre, apellido, email, contrasena, nombreusuario]);
-    // Verificar si direccionCompleta tiene valores validos 
-    if (direccionCompleta && direccionCompleta.direccion && direccionCompleta.ciudad && direccionCompleta.provincia && direccionCompleta.codigoPostal) {
-      const insertDireccionSql = 'INSERT INTO direccion (UsuarioID, Direccion, Ciudad, Provincia, CodigoPostal) VALUES (?, ?, ?, ?, ?)';
-      await connection.promise().query(insertDireccionSql, [
-        insertResult.insertId,
-        direccionCompleta.direccion, 
-        direccionCompleta.ciudad, 
-        direccionCompleta.provincia, 
-        direccionCompleta.codigoPostal
-      ]);
-    } else {
-      return res.status(400).json({
-        result_estado: 'error',
-        result_message: 'Error: Datos de la dirección incompletos.',
-        result_rows: 0,
-        result_proceso: 'POST DIRECCION',
-        result_data: ''
-      });
-    }
-    // Enviar correo de confirmacion
+
+    // Enviar correo de confirmación
     const request = mailjet
       .post("send", {'version': 'v3.1'})
       .request({
-        "Messages": [
+        "Messages":[
           {
             "From": {
               "Email": "tiendarazer2024@gmail.com",
@@ -149,7 +124,6 @@ ServidorWeb.post('/nuevousuario', async (req, res) => {
   }
 });
 
-
 ServidorWeb.get('/confirmar-cuenta', async (req, res) => {
   const { userId } = req.query;
 
@@ -158,6 +132,7 @@ ServidorWeb.get('/confirmar-cuenta', async (req, res) => {
   if (!userId) {
     return res.status(400).send('Falta el ID de usuario en la URL.');
   }
+
   try {
     // Verificar que el usuario exista, independientemente de su estado
     const [userResults] = await connection.promise().query(
@@ -189,7 +164,7 @@ ServidorWeb.get('/confirmar-cuenta', async (req, res) => {
 });
 
 
-/*MOSTRAR LOS USUARIOS*/
+/*MOSTRAR USUARIOS*/
 ServidorWeb.get('/mostrarusuarios', (req, res) => {
   const sql = 'SELECT ID, Nombre, Apellido, NombreUsuario, Email, Estado FROM usuario';
 
@@ -203,64 +178,10 @@ ServidorWeb.get('/mostrarusuarios', (req, res) => {
       });
       return;
     }
+
     res.json(results); // Enviamos directamente el array de resultados
   });
 });
-
-
-/* OBTENER USUARIO*/
-ServidorWeb.get('/obtenerusuario', async (req, res) => {
-  // Verificar si el usuario está autenticado
-  if (!req.session || !req.session.userId) {
-    return res.status(401).json({
-      result_estado: 'error',
-      result_message: 'Usuario no autenticado'
-    });
-  }
-
-  try {
-    // Realizamos un JOIN para obtener tanto los datos del usuario como los de la tabla direccion
-    const [userResults] = await connection.promise().query(
-      `SELECT u.Nombre, u.Apellido, u.Email, u.NombreUsuario, 
-              d.ID as DireccionID, d.Direccion, d.Ciudad, d.Provincia, d.CodigoPostal
-       FROM usuario u
-       LEFT JOIN direccion d ON u.ID = d.UsuarioID
-       WHERE u.ID = ?`,
-      [req.session.userId]
-    );
-
-    if (userResults.length === 0) {
-      return res.status(404).json({
-        result_estado: 'error',
-        result_message: 'Usuario no encontrado'
-      });
-    }
-
-    res.json({
-      result_estado: 'ok',
-      usuario: {
-        Nombre: userResults[0].Nombre,
-        Apellido: userResults[0].Apellido,
-        Email: userResults[0].Email,
-        NombreUsuario: userResults[0].NombreUsuario,
-        Direccion: {
-          ID: userResults[0].DireccionID,
-          Direccion: userResults[0].Direccion,
-          Ciudad: userResults[0].Ciudad,
-          Provincia: userResults[0].Provincia,
-          CodigoPostal: userResults[0].CodigoPostal
-        }
-      }
-    });
-  } catch (error) {
-    console.error('Error al obtener los datos del usuario:', error);
-    res.status(500).json({
-      result_estado: 'error',
-      result_message: 'Error al obtener los datos del usuario'
-    });
-  }
-});
-
 
 
 /*LOGIN*/
@@ -282,8 +203,7 @@ ServidorWeb.post('/login', (req, res) => {
 
     if (results.length > 0) {
       // Guardar el ID del usuario en la sesion
-      req.session.userId = results[0].ID; // {{ edit_1 }}
-      console.log('ID del usuario que inició sesión:', req.session.userId);
+      req.session.userId = results[0].ID;
       res.json({
         result_estado: 'ok',
         result_message: 'Login exitoso.',
@@ -301,7 +221,7 @@ ServidorWeb.post('/login', (req, res) => {
 
 
 ///RECUPERAR CONTRASEÑA///
-ServidorWeb.post('/recuperarcontrasena', async (req, res) => {
+ServidorWeb.post('/recuperar-contrasena', async (req, res) => {
   const { email } = req.body;
 
   if (!email) {
@@ -375,7 +295,7 @@ ServidorWeb.post('/recuperarcontrasena', async (req, res) => {
 
 
 ///CAMBIAR CONTRASEÑA///
-ServidorWeb.post('/cambiarcontrasena', async (req, res) => {
+ServidorWeb.post('/cambiar-contrasena', async (req, res) => {
   try {
     const { token, nuevaContrasena } = req.body;
 
@@ -414,77 +334,47 @@ ServidorWeb.post('/cambiarcontrasena', async (req, res) => {
     });
   }
 
-});
 
-ServidorWeb.post('/insertarproductos', upload.single('imagen'), async (req, res) => {
-  const { nombre, descripcion, precio, stock, talle, genero } = req.body;
-  const imagen = req.file;
+  
+  ServidorWeb.put('/actualizarusuario', async (req, res) => {
+    // Verificar si el usuario está autenticado
+    if (!req.session || !req.session.userId) {
+        return res.status(401).json({
+            result_estado: 'error',
+            result_message: 'Usuario no autenticado'
+        });
+    }
 
-  // Validación de campos
-  if (!nombre || !descripcion || !precio || !stock || !talle || !genero || !imagen) {
-      return res.status(400).json({
-          result_estado: 'error',
-          result_message: 'Por favor, complete todos los campos del producto y cargue una imagen.',
-          result_data: ''
-      });
-  }
+    const { nombre, apellido, email, nombreusuario } = req.body;
+    const userId = req.session.userId;
 
-  try {
-      // Subir imagen a Cloudinary
-      const result = await cloudinary.uploader.upload(imagen.path);
+    const query = 'UPDATE usuario SET Nombre = ?, Apellido = ?, Email = ?, NombreUsuario = ? WHERE ID = ?';
 
-      // Insertar datos del producto en la base de datos
-      const insertSql = `
-          INSERT INTO producto (Nombre, Descripcion, Precio, Stock, Talle, Genero, ImagenUrl) 
-          VALUES (?, ?, ?, ?, ?, ?, ?)
-      `;
-      const [insertResult] = await connection.promise().query(insertSql, [
-          nombre,
-          descripcion,
-          precio,
-          stock,
-          talle,
-          genero,
-          result.secure_url // URL de la imagen subida a Cloudinary
-      ]);
+    try {
+        const [result] = await connection.promise().query(query, [nombre, apellido, email, nombreusuario, userId]);
 
-      res.json({
-          result_estado: 'ok',
-          result_message: 'Producto insertado correctamente.',
-          result_data: insertResult.insertId
-      });
-  } catch (error) {
-      console.error('Error al insertar el producto:', error);
-      res.status(500).json({
-          result_estado: 'error',
-          result_message: 'Error al insertar el producto.',
-          result_data: ''
-      });
-  }
-});
-
-ServidorWeb.get('/obtenerproductos', async (req, res) => {
-  try {
-      const sql = 'SELECT * FROM producto';
-      const [productos] = await connection.promise().query(sql);
-      
-      res.json({
-          result_estado: 'ok',
-          result_message: 'Productos obtenidos correctamente.',
-          result_data: productos
-      });
-  } catch (error) {
-      console.error('Error al obtener productos:', error);
-      res.status(500).json({
-          result_estado: 'error',
-          result_message: 'Error al obtener productos.',
-          result_data: ''
-      });
-  }
+        if (result.affectedRows > 0) {
+            res.json({
+                result_estado: 'ok',
+                result_message: 'Datos actualizados correctamente'
+            });
+        } else {
+            res.status(404).json({
+                result_estado: 'error',
+                result_message: 'No se encontró el usuario para actualizar'
+            });
+        }
+    } catch (error) {
+        console.error('Error al actualizar usuario:', error);
+        res.status(500).json({
+            result_estado: 'error',
+            result_message: 'Error al actualizar los datos del usuario'
+        });
+    }
 });
 
 
-
+});
 
 
 // Iniciar el servidor
