@@ -113,7 +113,7 @@ CREATE TABLE `direccion` (
   PRIMARY KEY (`ID`),
   KEY `UsuarioID` (`UsuarioID`),
   CONSTRAINT `` FOREIGN KEY (`UsuarioID`) REFERENCES `usuario` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -122,7 +122,7 @@ CREATE TABLE `direccion` (
 
 LOCK TABLES `direccion` WRITE;
 /*!40000 ALTER TABLE `direccion` DISABLE KEYS */;
-INSERT INTO `direccion` VALUES (1,1,'Av Manuel Navarro 2737','Catamarca','Catamarca','4700');
+INSERT INTO `direccion` VALUES (1,1,'Av Manuel Navarro 2737','Catamarca','Catamarca','4700'),(2,2,'Av Manuel Navarro 2737','Catamarca','Catamarca','4700');
 /*!40000 ALTER TABLE `direccion` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -311,13 +311,13 @@ CREATE TABLE `producto` (
   `ID` int NOT NULL AUTO_INCREMENT,
   `Nombre` varchar(100) DEFAULT NULL,
   `Descripcion` text,
-  `Precio` decimal(10,2) DEFAULT NULL,
+  `Precio` int DEFAULT NULL,
   `Stock` int DEFAULT NULL,
   `Talle` varchar(10) DEFAULT NULL,
   `Genero` varchar(10) DEFAULT NULL,
-  `Imagen` varchar(255) DEFAULT NULL,
+  `ImagenUrl` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -326,6 +326,7 @@ CREATE TABLE `producto` (
 
 LOCK TABLES `producto` WRITE;
 /*!40000 ALTER TABLE `producto` DISABLE KEYS */;
+INSERT INTO `producto` VALUES (1,'Remera PUMA black 1.0','Remera puma hombre',35000,20,'M','Masculino','https://res.cloudinary.com/dzxxndbzu/image/upload/v1727322612/rrurdci5c6ipj6awwpe4.jpg'),(2,'Remera ADIDAS fire','Remera adidas',65,15,'L','Masculino','https://res.cloudinary.com/dzxxndbzu/image/upload/v1727325048/y5tuutvojrqqjgygmtlk.jpg'),(3,'Remera Nike Big Swoosh Lbr Hombre','Remera nike',60000,15,'M','Masculino','https://res.cloudinary.com/dzxxndbzu/image/upload/v1727366122/puoxxyiudiokmkzudhcu.jpg'),(4,'Remera Champion deportiva','Remera champion',30000,20,'L','Masculino','https://res.cloudinary.com/dzxxndbzu/image/upload/v1727366204/fzyjnioaf6vv29e0qjhw.jpg'),(5,'Remera Adidas Train Essentials Feelready','Remera adidas',49000,25,'M','Masculino','https://res.cloudinary.com/dzxxndbzu/image/upload/v1727370627/fkzekvtims0fjnxyp4uv.jpg'),(6,'Remera Puma Classics Oversized','Remera puma',48000,10,'L','Masculino','https://res.cloudinary.com/dzxxndbzu/image/upload/v1727370713/aq0e2nvzgxvxx3vph8lv.jpg'),(7,'Remera adidas Oversized Hombre','Remera adidas',50000,10,'XL','Masculino','https://res.cloudinary.com/dzxxndbzu/image/upload/v1727370796/qiwpj5irzamjnoanjhzf.jpg'),(8,'Remera Básquet Puma Core','Remera puma',47000,12,'M','Masculino','https://res.cloudinary.com/dzxxndbzu/image/upload/v1727370866/ynbb9ezpdwvnen9l7w1e.jpg');
 /*!40000 ALTER TABLE `producto` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -385,6 +386,34 @@ LOCK TABLES `soportecliente` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `tarjeta`
+--
+
+DROP TABLE IF EXISTS `tarjeta`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `tarjeta` (
+  `ID` int NOT NULL AUTO_INCREMENT,
+  `NumTarjeta` varchar(16) NOT NULL,
+  `FVencimiento` date NOT NULL,
+  `Cvv` int NOT NULL,
+  `UsuarioID` int DEFAULT NULL,
+  PRIMARY KEY (`ID`),
+  KEY `fk_usuario` (`UsuarioID`),
+  CONSTRAINT `fk_usuario` FOREIGN KEY (`UsuarioID`) REFERENCES `usuario` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `tarjeta`
+--
+
+LOCK TABLES `tarjeta` WRITE;
+/*!40000 ALTER TABLE `tarjeta` DISABLE KEYS */;
+/*!40000 ALTER TABLE `tarjeta` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `usuario`
 --
 
@@ -403,7 +432,7 @@ CREATE TABLE `usuario` (
   `Estado` enum('pendiente','activo') DEFAULT 'pendiente',
   PRIMARY KEY (`ID`),
   UNIQUE KEY `Email` (`Email`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -412,7 +441,7 @@ CREATE TABLE `usuario` (
 
 LOCK TABLES `usuario` WRITE;
 /*!40000 ALTER TABLE `usuario` DISABLE KEYS */;
-INSERT INTO `usuario` VALUES (1,'Maximiliano','Bazan','fmbazan@institutosanmartin.edu.ar','123456','MaxiBazan1',NULL,NULL,'activo');
+INSERT INTO `usuario` VALUES (1,'Maximiliano','Bazan','fmbazan@institutosanmartin.edu.ar','123','MaxiBazan1',NULL,NULL,'activo'),(2,'Felix','Bazan','bazanmaximiliano15@gmail.com','123','FxBazan',NULL,NULL,'activo');
 /*!40000 ALTER TABLE `usuario` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -425,4 +454,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-09-23 14:24:40
+-- Dump completed on 2024-09-27 14:19:02
