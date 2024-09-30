@@ -22,7 +22,7 @@ ServidorWeb.use(express.urlencoded({ extended: false }));
 
 
 const multer = require('multer');
-const upload = multer({ dest: 'uploads/' }); // carpeta temporal para subir imágenes
+const upload = multer({ dest: 'uploads/' }); // carpeta temporal para subir imAgenes
 const cloudinary = require('cloudinary').v2;
 
 cloudinary.config({
@@ -43,7 +43,7 @@ ServidorWeb.use(session({
 const connection = mysql.createConnection({
   host: 'localhost',
   user: 'root',
-  password: '12345678',
+  password: '12345678',  //{{admin en notebook}}
   database: 'tienda_online'
 });
 
@@ -56,8 +56,9 @@ connection.connect((err) => {
 });
 
 
-/////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
+////////////////////////////// /*ENDPOINT*/ //////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
 
 
 /*NUEVO USUARIO*/	
@@ -153,8 +154,6 @@ ServidorWeb.post('/nuevousuario', async (req, res) => {
 ServidorWeb.get('/confirmar-cuenta', async (req, res) => {
   const { userId } = req.query;
 
-  console.log('Query params recibidos:', req.query); // Log para depuración
-
   if (!userId) {
     return res.status(400).send('Falta el ID de usuario en la URL.');
   }
@@ -203,12 +202,12 @@ ServidorWeb.get('/mostrarusuarios', (req, res) => {
       });
       return;
     }
-    res.json(results); // Enviamos directamente el array de resultados
+    res.json(results);
   });
 });
 
 
-/* OBTENER USUARIO*/
+/*OBTENER USUARIO*/
 ServidorWeb.get('/obtenerusuario', async (req, res) => {
   // Verificar si el usuario está autenticado
   if (!req.session || !req.session.userId) {
@@ -282,7 +281,7 @@ ServidorWeb.post('/login', (req, res) => {
 
     if (results.length > 0) {
       // Guardar el ID del usuario en la sesion
-      req.session.userId = results[0].ID; // {{ edit_1 }}
+      req.session.userId = results[0].ID;
       console.log('ID del usuario que inició sesión:', req.session.userId);
       res.json({
         result_estado: 'ok',
@@ -300,7 +299,7 @@ ServidorWeb.post('/login', (req, res) => {
 });
 
 
-///RECUPERAR CONTRASEÑA///
+/*RECUPERAR CONTRASEÑA*/
 ServidorWeb.post('/recuperarcontrasena', async (req, res) => {
   const { email } = req.body;
 
@@ -374,7 +373,7 @@ ServidorWeb.post('/recuperarcontrasena', async (req, res) => {
 });
 
 
-///CAMBIAR CONTRASEÑA///
+/*CAMBIAR CONTRASEÑA*/
 ServidorWeb.post('/cambiarcontrasena', async (req, res) => {
   try {
     const { token, nuevaContrasena } = req.body;
@@ -416,12 +415,13 @@ ServidorWeb.post('/cambiarcontrasena', async (req, res) => {
 
 });
 
-ServidorWeb.post('/insertarproductos', upload.single('imagen'), async (req, res) => {
-  const { nombre, descripcion, precio, stock, talle, genero } = req.body;
+/*INSERTAR PRODUCTO*/
+ServidorWeb.post('/insertarproducto', upload.single('imagen'), async (req, res) => {
+  const { nombre, marca, descripcion, precio, genero, tipo } = req.body;
   const imagen = req.file;
 
   // Validación de campos
-  if (!nombre || !descripcion || !precio || !stock || !talle || !genero || !imagen) {
+  if (!nombre || !marca|| !descripcion || !precio || !genero || !tipo|| !imagen) {
       return res.status(400).json({
           result_estado: 'error',
           result_message: 'Por favor, complete todos los campos del producto y cargue una imagen.',
@@ -433,18 +433,17 @@ ServidorWeb.post('/insertarproductos', upload.single('imagen'), async (req, res)
       // Subir imagen a Cloudinary
       const result = await cloudinary.uploader.upload(imagen.path);
 
-      // Insertar datos del producto en la base de datos
       const insertSql = `
-          INSERT INTO producto (Nombre, Descripcion, Precio, Stock, Talle, Genero, ImagenUrl) 
+          INSERT INTO producto (Nombre, Marca, Descripcion, Precio, Genero, Tipo, ImagenUrl) 
           VALUES (?, ?, ?, ?, ?, ?, ?)
       `;
       const [insertResult] = await connection.promise().query(insertSql, [
           nombre,
+          marca,
           descripcion,
           precio,
-          stock,
-          talle,
           genero,
+          tipo,
           result.secure_url // URL de la imagen subida a Cloudinary
       ]);
 
@@ -462,6 +461,7 @@ ServidorWeb.post('/insertarproductos', upload.single('imagen'), async (req, res)
       });
   }
 });
+
 
 ServidorWeb.get('/obtenerproductos', async (req, res) => {
   try {
@@ -483,6 +483,132 @@ ServidorWeb.get('/obtenerproductos', async (req, res) => {
   }
 });
 
+/*MOSTRAR PRODUCTO POR ID*/
+ServidorWeb.get('/producto/:id', async (req, res) => {
+  const productoId = req.params.id;
+
+  try {
+      const sql = 'SELECT * FROM producto WHERE id = ?';
+      const [producto] = await connection.promise().query(sql, [productoId]);
+
+      if (producto.length > 0) {
+          res.json({
+              result_estado: 'ok',
+              result_message: 'Producto obtenido correctamente.',
+              result_data: producto[0] // Enviar solo el primer producto
+          });
+      } else {
+          res.status(404).json({
+              result_estado: 'error',
+              message: 'Producto no encontrado'
+          });
+      }
+  } catch (error) {
+      console.error('Error al obtener el producto:', error);
+      res.status(500).json({
+          result_estado: 'error',
+          message: 'Error al obtener el producto'
+      });
+  }
+});
+
+/*AGREGAR TALLES Y STOCK*/
+ServidorWeb.post('/agregarTalleyStock', async (req, res) => {
+  const { ProductoID, Talle, Stock } = req.body;
+
+  if (!ProductoID || !Talle || !Stock) {
+      return res.status(400).json({
+          result_estado: 'error',
+          result_message: 'Por favor, complete todos los campos (ProductoID, Talle y Stock).',
+          result_data: ''
+      });
+  }
+
+  try {
+      // Verificar si ya existe un registro con ese ProductoID y Talle
+      const selectSql = `
+          SELECT * FROM Stock WHERE ProductoID = ? AND Talle = ?
+      `;
+      const [resultado] = await connection.promise().query(selectSql, [ProductoID, Talle]);
+
+      if (resultado.length > 0) {
+          // Si existe, actualizar el stock
+          const updateSql = `
+              UPDATE Stock SET Stock = ? WHERE ProductoID = ? AND Talle = ?
+          `;
+          await connection.promise().query(updateSql, [Stock, ProductoID, Talle]);
+
+          res.json({
+              result_estado: 'ok',
+              result_message: 'Stock actualizado correctamente.',
+              result_data: resultado[0].ID
+          });
+      } else {
+          // Si no existe, insertar un nuevo registro
+          const insertSql = `
+              INSERT INTO Stock (ProductoID, Talle, Stock) VALUES (?, ?, ?)
+          `;
+          const [insertResult] = await connection.promise().query(insertSql, [ProductoID, Talle, Stock]);
+
+          res.json({
+              result_estado: 'ok',
+              result_message: 'Talle y stock insertados correctamente.',
+              result_data: insertResult.insertId // ID del nuevo registro insertado
+          });
+      }
+
+  } catch (error) {
+      console.error('Error al agregar/editar talle y stock:', error);
+      res.status(500).json({
+          result_estado: 'error',
+          result_message: 'Error al procesar la solicitud.',
+          result_data: ''
+      });
+  }
+});
+
+
+/*MOSTRAR TALLES Y STOCK*/ 
+ServidorWeb.get('/obtenerTallesYStock/:productoID', async (req, res) => {
+  const { productoID } = req.params;
+
+  if (!productoID) {
+      return res.status(400).json({
+          result_estado: 'error',
+          result_message: 'ID de producto no proporcionado.',
+          result_data: ''
+      });
+  }
+
+  try {
+      const selectSql = `
+          SELECT * FROM Stock WHERE ProductoID = ?
+      `;
+      const [resultado] = await connection.promise().query(selectSql, [productoID]);
+
+      if (resultado.length > 0) {
+          res.json({
+              result_estado: 'ok',
+              result_message: 'Talles y stock obtenidos correctamente.',
+              result_data: resultado
+          });
+      } else {
+          res.json({
+              result_estado: 'ok',
+              result_message: 'No se encontraron talles y stock para este producto.',
+              result_data: []
+          });
+      }
+
+  } catch (error) {
+      console.error('Error al obtener talles y stock:', error);
+      res.status(500).json({
+          result_estado: 'error',
+          result_message: 'Error al procesar la solicitud.',
+          result_data: ''
+      });
+  }
+});
 
 
 

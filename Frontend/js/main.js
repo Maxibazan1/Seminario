@@ -53,6 +53,22 @@ document.addEventListener("DOMContentLoaded", () => {
     if (contenedorProductos) {
         cargarProductos();
     }
+
+    cargarProducto();
+
+    const tablaProductos = document.getElementById('tablaProductos');
+    if (tablaProductos) {
+        cargarTablaProductos();
+    }
+
+
+    /* MOSTRAR TALLES Y STOCK */
+    const btnVerTallesStock = document.getElementById('btnVerTallesStock');
+    if (btnVerTallesStock) {
+        btnVerTallesStock.addEventListener('click', mostrarTallesYStock);
+    }
+
+
 });
 
 async function crearCuenta(event) {
@@ -358,30 +374,29 @@ async function insertarProducto(event) {
     event.preventDefault();
 
     const nombre = document.getElementById('nombre')?.value.trim() || '';
+    const marca = document.getElementById('marca')?.value.trim() || '';
     const descripcion = document.getElementById('descripcion')?.value.trim() || '';
     const precio = document.getElementById('precio')?.value.trim() || '';
-    const stock = document.getElementById('stock')?.value.trim() || '';
-    const talle = document.getElementById('talle')?.value.trim() || '';
     const genero = document.getElementById('genero')?.value.trim() || '';
+    const tipo = document.getElementById('tipo')?.value.trim() || '';
     const imagen = document.getElementById('imagen')?.files[0];
 
-    // Validación de campos
-    if (!nombre || !descripcion || !precio || !stock || !talle || !genero || !imagen) {
+    if (!nombre || !marca || !descripcion || !precio || !genero || !tipo || !imagen) {
         alert('Por favor, complete todos los campos del producto.');
         return;
     }
 
     const formData = new FormData();
     formData.append('nombre', nombre);
+    formData.append('marca', marca);
     formData.append('descripcion', descripcion);
     formData.append('precio', precio);
-    formData.append('stock', stock);
-    formData.append('talle', talle);
     formData.append('genero', genero);
+    formData.append('tipo', tipo);
     formData.append('imagen', imagen);
 
     try {
-        const response = await fetch('/insertarproductos', { 
+        const response = await fetch('/insertarproducto', { 
             method: 'POST',
             body: formData
         });
@@ -404,12 +419,12 @@ async function insertarProducto(event) {
 }
 
 
+
 let cantidadActual = 6; // Cantidad de productos mostrados inicialmente
 const incremento = 6; // Cantidad de productos a cargar al hacer click en "Mostrar mas"
 
 function cargarProductos() {
-    console.log('Cargando productos...');
-    fetch('/obtenerproductos')
+    fetch('/obtenerproductos') 
         .then(response => {
             if (!response.ok) {
                 throw new Error('Error en la respuesta del servidor');
@@ -418,7 +433,6 @@ function cargarProductos() {
         })
         .then(data => {
             const productos = data.result_data;
-            console.log('Productos recibidos de la BD:', productos);
             const contenedorProductos = document.getElementById('contenedorproductos');
             contenedorProductos.innerHTML = ''; // Limpiar el contenedor antes de agregar productos
 
@@ -426,16 +440,18 @@ function cargarProductos() {
             const productosParaMostrar = productos.slice(0, cantidadActual);
             if (Array.isArray(productosParaMostrar) && productosParaMostrar.length > 0) {
                 const contenidoProductos = productosParaMostrar.map(producto => `
-                    <div class="col-md-4 mb-4 d-flex justify-content-center">
-                        <div class="card border-2 border-dark hover-shadow" style="box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); width: 18rem;">
-                            <img src="${producto.ImagenUrl}" class="card-img-top" alt="${producto.Nombre}" style="filter: brightness(90%);">
-                            <div class="card-body">
-                                <p class="card-title text-dark text-center">${producto.Nombre}</p>
-                                <p class="card-text text-dark text-center" style="font-size: 1.7em; font-weight: bold;">$${producto.Precio}</p>
-                                <button class="btn btn-sm btn-primary d-block mx-auto rounded-5" style="background-color: #0D0638; border: none; padding: 10px 20px;">Agregar al carrito</button>
-                            </div>
-                        </div>
+                <div class="col-md-4 mb-4 d-flex justify-content-center">
+                    <div class="card border-2 border-dark hover-shadow" style="box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); width: 18rem; height: 100%;">
+                        <a href="producto.html?id=${producto.ID}">
+                            <img src="${producto.ImagenUrl}" class="card-img-top" alt="${producto.Nombre}" style="filter: brightness(90%); width: 100%; height: 100%; object-fit: cover;">
+                        </a>
+                    <div class="card-body">
+                        <p class="card-title text-dark text-center">${producto.Nombre}</p>
+                        <p class="card-text text-dark text-center" style="font-size: 1.7em; font-weight: bold;">$${producto.Precio}</p>
                     </div>
+                        <a href="producto.html?id=${producto.ID}" class="btn btn-primary w-auto" style="background-color: #0D0638; border: none;">Ver</a>
+                    </div>
+                </div>
                 `).join('');
                 contenedorProductos.innerHTML = contenidoProductos;
 
@@ -459,10 +475,292 @@ function cargarProductos() {
             console.error('Error al cargar productos:', error);
             const contenedorProductos = document.getElementById('contenedorproductos');
             contenedorProductos.innerHTML = `<div class="col-12 text-center">Error al cargar productos: ${error.message}</div>`;
-        });
+        }); 
 }
 
 
+let cantidad = 1; // Inicializar la cantidad a 1
+const maxCantidad = 10; // Definir el límite máximo de cantidad
+
+// Funcion para aumentar la cantidad
+function aumentarCantidad() {
+    if (cantidad < maxCantidad) { 
+        cantidad++;
+        document.getElementById('var-value').innerText = cantidad; // Actualizar el valor en el HTML
+    } else {
+        alert(`La cantidad máxima es ${maxCantidad}`); // Mostrar un mensaje si se alcanza el máximo
+    }
+}
+
+// Funcion para disminuir la cantidad
+function disminuirCantidad() {
+    if (cantidad > 1) {
+        cantidad--;
+        document.getElementById('var-value').innerText = cantidad; // Actualizar el valor en el HTML
+    }
+}
 
 
+async function cargarProducto() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const productoID = urlParams.get('id');
+
+    if (!productoID) {
+        console.error('ID del producto no proporcionado');
+        return;
+    }
+
+    try {
+        const response = await fetch(`http://localhost:3000/producto/${productoID}`);
+        if (!response.ok) {
+            throw new Error('Error en la respuesta del servidor');
+        }
+        const data = await response.json();
+
+        if (data.result_estado === "ok") {
+            const producto = data.result_data;
+            
+            document.querySelector('#product-detail').src = producto.ImagenUrl;
+            document.querySelector('#product-name').innerText = producto.Nombre;
+            document.querySelector('#product-price').innerText = `$${producto.Precio}`;
+            document.querySelector('#product-description').innerText = producto.Descripcion;
+
+            // Mostrar talles y stock
+            const tallesYStockContainer = document.getElementById('talles-y-stock');
+            if (tallesYStockContainer) {
+                const responseTallesYStock = await fetch(`/obtenerTallesYStock/${productoID}`);
+                const resultTallesYStock = await responseTallesYStock.json();
+
+                if (resultTallesYStock.result_estado === 'ok') {
+                    const tallesYStock = resultTallesYStock.result_data;
+
+                    tallesYStockContainer.innerHTML = ''; // Limpiar el contenedor antes de agregar los datos
+
+                    if (tallesYStock.length > 0) {
+                        const tallaButtons = tallesYStock.map(talleYStock => {
+                            return `<button type="button" class="btn btn-outline-dark">${talleYStock.Talle} - Stock: ${talleYStock.Stock}</button>`;
+                        }).join('');
+                        tallesYStockContainer.innerHTML = tallaButtons;
+                    } else {
+                        tallesYStockContainer.innerHTML = '<p style="color: black;">No hay talles disponibles para este producto.</p>';
+                    }
+                } else {
+                    tallesYStockContainer.innerHTML = `<p>Error: ${resultTallesYStock.result_message}</p>`;
+                }
+            }
+        } else {
+            console.error('Error al obtener el producto:', data.result_message);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+
+const productosPorPagina = 5;
+let productos = [];
+let paginaActual = 1;
+
+async function cargarTablaProductos() {
+    try {
+        const response = await fetch('/obtenerproductos'); 
+        const data = await response.json(); 
+
+        if (data.result_estado !== 'ok') {
+            console.error('Error al cargar los productos:', data.result_message);
+            return;
+        }
+
+        productos = data.result_data; 
+        mostrarTablaProductos();
+
+    } catch (error) {
+        console.error('Error al cargar los productos:', error);
+    }
+}
+
+function mostrarTablaProductos() {
+    const tbody = document.getElementById('productos-tbody');
+    tbody.innerHTML = ''; // Limpiar contenido anterior
+
+    // Calcular el índice de inicio y fin de los productos para la página actual
+    const inicio = (paginaActual - 1) * productosPorPagina;
+    const fin = inicio + productosPorPagina;
+    const productosPagina = productos.slice(inicio, fin);
+
+    if (Array.isArray(productosPagina)) {
+        productosPagina.forEach(producto => {
+            const fila = document.createElement('tr');
+
+            // Columna Imagen
+            const imagenCol = document.createElement('td');
+            const imagen = document.createElement('img');
+            imagen.src = producto.ImagenUrl;
+            imagen.alt = producto.Nombre;
+            imagen.style.width = '100px';
+            imagenCol.appendChild(imagen);
+            fila.appendChild(imagenCol);
+
+            // Columna Nombre
+            const nombreCol = document.createElement('td');
+            nombreCol.textContent = producto.Nombre;
+            fila.appendChild(nombreCol);
+
+            // Columna Marca
+            const marcaCol = document.createElement('td');
+            marcaCol.textContent = producto.Marca;
+            fila.appendChild(marcaCol);
+
+            // Columna Precio
+            const precioCol = document.createElement('td');
+            precioCol.textContent = `$${producto.Precio}`;
+            fila.appendChild(precioCol);
+
+            // Columna Género
+            const generoCol = document.createElement('td');
+            generoCol.textContent = producto.Genero;
+            fila.appendChild(generoCol);
+
+            // Columna Tipo
+            const tipoCol = document.createElement('td');
+            tipoCol.textContent = producto.Tipo;
+            fila.appendChild(tipoCol);
+
+            // Columna Agregar/Modificar Talle
+            const agregarTalleCol = document.createElement('td');
+            const btnAgregarTalle = document.createElement('button');
+            btnAgregarTalle.textContent = 'Agregar/Editar';
+            btnAgregarTalle.classList.add('btn', 'btn-primary', 'd-block', 'd-md-inline-block');
+            btnAgregarTalle.onclick = () => {
+
+                document.getElementById('modalAgregarTalle').setAttribute('data-producto-id', producto.ID);
+                $('#modalAgregarTalle').modal('show');
+            };
+            agregarTalleCol.appendChild(btnAgregarTalle);
+            fila.appendChild(agregarTalleCol);
+
+            const verTallesStockCol = document.createElement('td');
+            const btnVerTallesStock = document.createElement('button');
+            btnVerTallesStock.textContent = 'Ver Talles y Stock';
+            btnVerTallesStock.classList.add('btn', 'btn-primary', 'd-block', 'd-md-inline-block');
+            btnVerTallesStock.onclick = () => {
+                document.getElementById('modalVerTalles').setAttribute('data-producto-id', producto.ID);
+                mostrarTallesYStock(); // Llamar a la función para mostrar los datos
+                $('#modalVerTalles').modal('show');
+            };
+            verTallesStockCol.appendChild(btnVerTallesStock);
+            fila.appendChild(verTallesStockCol);
+
+    
+            tbody.appendChild(fila);
+        });
+    }
+
+    configurarPaginado(); // Actualiza la paginación
+}
+
+function configurarPaginado() {
+    const paginationContainer = document.getElementById('pagination');
+    paginationContainer.innerHTML = ''; // Limpiar el contenido anterior
+
+    const totalPaginas = Math.ceil(productos.length / productosPorPagina);
+
+    for (let i = 1; i <= totalPaginas; i++) {
+        const li = document.createElement('li');
+        li.className = 'page-item' + (i === paginaActual ? ' active' : '');
+        const a = document.createElement('a');
+        a.className = 'page-link';
+        a.textContent = i;
+        a.href = '#';
+        a.onclick = (event) => {
+            event.preventDefault();
+            paginaActual = i; // Actualiza la página actual
+            mostrarTablaProductos(); // Muestra los productos de la nueva página
+        };
+
+        li.appendChild(a);
+        paginationContainer.appendChild(li);
+    }
+}
+
+async function agregarTalleyStock() {
+    const productoID = document.getElementById('modalAgregarTalle').getAttribute('data-producto-id');
+    const talle = document.getElementById('talle').value;
+    const stock = document.getElementById('stock').value;
+
+    if (!talle || !stock || !productoID) {
+        alert('Todos los campos son obligatorios');
+        return;
+    }
+
+    try {
+        const response = await fetch('/agregarTalleyStock', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                ProductoID: productoID,
+                Talle: talle,
+                Stock: stock,
+            }),
+        });
+
+        const result = await response.json();
+
+        if (result.result_estado === 'ok') {
+            alert('Talle y stock actualizados correctamente');
+            $('#modalAgregarTalle').modal('hide');
+            cargarTablaProductos(); // Recargar la tabla de productos para reflejar los cambios
+        } else {
+            alert('Error al actualizar el talle y stock: ' + result.result_message);
+        }
+    } catch (error) {
+        console.error('Error al agregar talle y stock:', error);
+    }
+}
+
+async function mostrarTallesYStock() {
+    const productoID = document.getElementById('modalVerTalles').getAttribute('data-producto-id');
+    const tallesYStockContainer = document.getElementById('talles-y-stock');
+
+    if (!productoID) {
+        alert('Error al obtener el ID del producto');
+        return;
+    }
+
+    try {
+        const response = await fetch(`/obtenerTallesYStock/${productoID}`, {
+            method: 'GET',
+        });
+
+        const result = await response.json();
+
+        if (result.result_estado === 'ok') {
+            const tallesYStock = result.result_data;
+
+            // Limpiar el contenedor
+            tallesYStockContainer.innerHTML = '';
+
+            // Mostrar los talles y stock
+            if (tallesYStock.length > 0) {
+                tallesYStock.forEach((talleYStock) => {
+                    const talleYStockHTML = `
+                        <div class="mb-2 text-center">
+                            <strong>Talle:</strong> ${talleYStock.Talle} - <strong>Stock:</strong> ${talleYStock.Stock}
+                        </div>
+                    `;
+                    tallesYStockContainer.innerHTML += talleYStockHTML;
+                });
+            } else {
+                tallesYStockContainer.innerHTML = '<p style="color: black;">No hay talles disponibles para este producto.</p>';
+            }
+        } else {
+            tallesYStockContainer.innerHTML = `<p>Error: ${result.result_message}</p>`;
+        }
+    } catch (error) {
+        console.error('Error al obtener los talles y stock:', error);
+        tallesYStockContainer.innerHTML = '<p>Error al obtener los talles y stock.</p>';
+    }
+}
 

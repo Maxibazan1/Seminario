@@ -6,17 +6,18 @@
     <title>RAZER - Tienda en Línea</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Baskervville+SC&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/styles.css">    
 </head>
 <body>
     <header id="header">
         <div id="logo">
-            <img src="Imagenes/logo.png" id="logo">
+            <a href="index.html">
+                <img src="Imagenes/logo.png" id="logo">
+            </a>
         </div>
         <div id="buscador">
             <input type="text" id="barra_buscador" placeholder="Buscar">
@@ -36,16 +37,16 @@
             <div class="collapse navbar-collapse justify-content-center" id="navbarNavDropdown">
                 <ul class="navbar-nav text-center">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#" style="color: black;">Inicio</a>
+                        <a class="nav-link active" aria-current="page" href="index.html" style="color: black;">Inicio</a>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: black;">
                             Categorías
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink" style="border: 1px solid black;">
-                            <li><a class="dropdown-item text-center" href="#">Hombres</a></li>
-                            <li><a class="dropdown-item text-center" href="#">Mujeres</a></li>
-                            <li><a class="dropdown-item text-center" href="#">Niños</a></li>
+                            <li><a class="dropdown-item text-center" href="hombre.html">Hombres</a></li>
+                            <li><a class="dropdown-item text-center" href="mujer.html">Mujeres</a></li>
+                            <li><a class="dropdown-item text-center" href="niño.html">Niños</a></li>
                         </ul>
                     </li>
                     <li class="nav-item">
@@ -71,34 +72,35 @@
                                 <input type="text" id="nombre" class="form-control" required placeholder="Ingresa el nombre del producto">
                             </div>
                             <div class="col-md-6">
-                                <label for="descripcion" class="form-label">Descripción</label>
-                                <input type="text" id="descripcion" class="form-control" required placeholder="Ingresa la descripción del producto">
+                                <label for="descripcion" class="form-label">Marca</label>
+                                <input type="text" id="marca" class="form-control" required placeholder="Ingresa la marca del producto">
                             </div>
                         </div>
                         <div class="row mb-3">
                             <div class="col-md-6">
-                                <label for="precio" class="form-label">Precio</label>
+                                <label for="precio" class="form-label">Descripcion</label>
+                                <input type="text" id="descripcion" class="form-control" required placeholder="Ingresa la descripcion del producto">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="stock" class="form-label">Precio</label>
                                 <input type="text" id="precio" class="form-control" required placeholder="Ingresa el precio del producto">
                             </div>
-                            <div class="col-md-6">
-                                <label for="stock" class="form-label">Stock</label>
-                                <input type="text" id="stock" class="form-control" required placeholder="Ingresa el stock del producto">
-                            </div>
                         </div>
                         <div class="row mb-3">
                             <div class="col-md-6">
-                                <label for="talle" class="form-label">Talle</label>
-                                <input type="text" id="talle" class="form-control" required placeholder="Ingresa el talle del producto">
+                                <label for="talle" class="form-label">Género</label>
+                                <input type="text" id="genero" class="form-control" required placeholder="Ingresa el talle del producto">
                             </div>
                             <div class="col-md-6">
-                                <label for="genero" class="form-label">Género</label>
-                                <input type="text" id="genero" class="form-control" required placeholder="Ingresa el género del producto">
+                                <label for="stock" class="form-label">Tipo</label>
+                                <input type="text" id="tipo" class="form-control" required placeholder="Ingresa el precio del producto">
                             </div>
                         </div>
-                        <div class="mb-3">
+                        <div class="col-md-6">
                             <label for="imagen" class="form-label">Imagen</label>
                             <input type="file" id="imagen" class="form-control" required>
-                        </div>
+                        </div>                                  
+                        <br>
                         <button type="submit" class="btn btn-primary w-100">Ingresar Producto</button>
                     </form>
                 </div>

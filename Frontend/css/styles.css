@@ -1,10 +1,7 @@
-.baskervville-sc-regular {
-    font-family: "Baskervville SC", serif;
-    font-weight: 400;
-    font-style: normal;
-  }
+@import url('https://fonts.googleapis.com/css?family=Rubik:300,400,700&display=swap');
 
 body {
+    font-family: 'Rubik', sans-serif;
     margin: auto;
     padding: auto;
     padding-bottom: auto;
@@ -90,6 +87,7 @@ body {
     text-align: center;
     color: #0D0638;
     margin-bottom: 20px;
+    font-size: 2.5rem; /* Aumentar tamaño del encabezado */
 }
 
 .owl-carousel .item {
@@ -97,35 +95,46 @@ body {
     justify-content: center;
     align-items: center;
     text-align: center;
-    padding: 10px; 
+    padding: 10px;
+    transition: transform 0.3s ease; /* Efecto de transición suave */
+}
+
+.owl-carousel .item:hover {
+    transform: scale(1.05); /* Efecto de aumento al pasar el mouse */
 }
 
 .producto-info {
-    border: 1px solid black; 
-    border-radius: 5px; 
-    padding: 10px;
-    background-color: #fff; 
-    box-shadow: 0 0 5px rgba(0,0,0,5); 
+    border: 5px solid rgba(0, 0, 0, 1); /* Borde en color difuminado */
+    border-radius: 10px; /* Bordes más redondeados */
+    padding: 20px; /* Espaciado interno aumentado */
+    background-color: #fff;
+    transition: box-shadow 0.3s ease; /* Transición de sombra */
+}
+
+.producto-info:hover {
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); /* Sombra más pronunciada al pasar el mouse */
 }
 
 .producto-info img {
     max-width: 100%;
     height: auto;
-    border: 2px solid black; 
-    border-radius: 5px; 
-    margin-bottom: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.50); /* Sombra más suave */
+    border-radius: 10px; /* Bordes redondeados */
+    margin-bottom: 15px; /* Espaciado inferior aumentado */
 }
 
 .producto-info h4 {
     margin: 0;
-    font-size: 30px;
+    font-size: 1.8rem; /* Tamaño de fuente más grande */
+    color: #0D0638; /* Color del texto */
 }
 
 .producto-info p {
     margin: 0;
-    font-size: 25px;
-    color: #0D0638; 
+    font-size: 1.5rem; /* Tamaño de fuente más grande */
+    color: #0D0638; /* Color del texto */
 }
+
 
 
 /*BANNER PROMOCIONES*/
@@ -260,3 +269,31 @@ hr {
 .list-group-item ul li a:hover {
     color: #0D0638;
 }
+
+
+#tablaProductos {
+    width: 100%;
+    margin: 0 auto; /* Centra la tabla */
+    table-layout: fixed; /* Para que las columnas tengan un ancho igual */
+}
+#tablaProductos th, 
+#tablaProductos td {
+    text-align: center; /* Centra el texto */
+    vertical-align: middle; /* Centra el contenido verticalmente */
+}
+
+#tablaProductos img {
+    display: block; /* Hace que la imagen sea un bloque */
+    margin: 0 auto; /* Centra la imagen dentro de la celda */
+}
+
+.dataTables_wrapper .dataTables_paginate {
+    display: flex; /* Usar flexbox para centrar */
+    justify-content: center; /* Centra horizontalmente */
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    margin: 0 5px; /* Espaciado entre los botones de paginado */
+}
+
+
