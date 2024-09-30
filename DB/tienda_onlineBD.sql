@@ -309,15 +309,15 @@ DROP TABLE IF EXISTS `producto`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `producto` (
   `ID` int NOT NULL AUTO_INCREMENT,
-  `Nombre` varchar(100) DEFAULT NULL,
+  `Nombre` varchar(250) DEFAULT NULL,
   `Descripcion` text,
   `Precio` int DEFAULT NULL,
-  `Stock` int DEFAULT NULL,
-  `Talle` varchar(10) DEFAULT NULL,
   `Genero` varchar(10) DEFAULT NULL,
-  `ImagenUrl` varchar(255) DEFAULT NULL,
+  `ImagenUrl` varchar(300) DEFAULT NULL,
+  `Marca` varchar(50) DEFAULT NULL,
+  `Tipo` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -326,7 +326,7 @@ CREATE TABLE `producto` (
 
 LOCK TABLES `producto` WRITE;
 /*!40000 ALTER TABLE `producto` DISABLE KEYS */;
-INSERT INTO `producto` VALUES (1,'Remera PUMA black 1.0','Remera puma hombre',35000,20,'M','Masculino','https://res.cloudinary.com/dzxxndbzu/image/upload/v1727322612/rrurdci5c6ipj6awwpe4.jpg'),(2,'Remera ADIDAS fire','Remera adidas',65,15,'L','Masculino','https://res.cloudinary.com/dzxxndbzu/image/upload/v1727325048/y5tuutvojrqqjgygmtlk.jpg'),(3,'Remera Nike Big Swoosh Lbr Hombre','Remera nike',60000,15,'M','Masculino','https://res.cloudinary.com/dzxxndbzu/image/upload/v1727366122/puoxxyiudiokmkzudhcu.jpg'),(4,'Remera Champion deportiva','Remera champion',30000,20,'L','Masculino','https://res.cloudinary.com/dzxxndbzu/image/upload/v1727366204/fzyjnioaf6vv29e0qjhw.jpg'),(5,'Remera Adidas Train Essentials Feelready','Remera adidas',49000,25,'M','Masculino','https://res.cloudinary.com/dzxxndbzu/image/upload/v1727370627/fkzekvtims0fjnxyp4uv.jpg'),(6,'Remera Puma Classics Oversized','Remera puma',48000,10,'L','Masculino','https://res.cloudinary.com/dzxxndbzu/image/upload/v1727370713/aq0e2nvzgxvxx3vph8lv.jpg'),(7,'Remera adidas Oversized Hombre','Remera adidas',50000,10,'XL','Masculino','https://res.cloudinary.com/dzxxndbzu/image/upload/v1727370796/qiwpj5irzamjnoanjhzf.jpg'),(8,'Remera Básquet Puma Core','Remera puma',47000,12,'M','Masculino','https://res.cloudinary.com/dzxxndbzu/image/upload/v1727370866/ynbb9ezpdwvnen9l7w1e.jpg');
+INSERT INTO `producto` VALUES (1,'Remera Nike Big Swoosh Lbr Hombre','Con la Remera Nike Big Swoosh Lbr Hombre, tus rutinas diarias tienen un nuevo sentido. Confeccionada con algodón supersuave que te brinda confort en cada uso, convirtiéndola en tu remera favorita. Su diseño moderno permite que se adapte a todos tus planes sin importar a donde vayas. Usala y viví en estilo que Nike tiene para vos.',58499,'Hombre','https://res.cloudinary.com/dzxxndbzu/image/upload/v1727584104/yumwm3fftbsqf5k7nkpy.jpg','Nike','Remera'),(2,'Remera Básquet Puma Core Hombre','Dominá la cancha con esta Remera Básquet Puma Core Hombre de algodón transpirable diseñada para un alto rendimiento. Con un ajuste regular pero atlético, harás triples y superarás a los defensores con facilidad. Cuando suene el timbre final, habrás llevado a tu equipo a la victoria.',48999,'Hombre','https://res.cloudinary.com/dzxxndbzu/image/upload/v1727585620/xh0xdinvuwf0rd7qfhvv.jpg','Puma','Remera'),(3,'Remera adidas Flames Concert Hombre Algodón','La Remera adidas Flames Concert Hombre Algodón estará siempre lista para cualquiera de tus aventuras. El llamativo estampado y el tejido de algodón suave le dan la bienvenida a la vida diaria. Holgada y extragrande, la camiseta crea una vibra descomplicada perfecta para pasar el rato con amigos y vivir la vida bajo tus propios términos.',61999,'Hombre','https://res.cloudinary.com/dzxxndbzu/image/upload/v1727585684/nacml2rg6njjdoqkgrzt.jpg','Adidas','Remera'),(4,'Remera Nike Big Swoosh Lbr Hombre','Experimentá la comodidad excepcional la Remera Nike Big Swoosh Lbr Hombre. Su tejido de algodón proporciona una sensación suave y ligera, perfecta para cada día. Diseñada con un ajuste relajado en los hombros, el pecho y el cuerpo, esta remera ofrece una apariencia atlética que se adapta a tu estilo de vida activo. Ideal para usar en capas, esta prenda versátil combina estilo y confort para que te sientas genial en cualquier ocasión. Elevá tu vestuario diario con la calidad y el rendimiento característicos de Nike.',58499,'Hombre','https://res.cloudinary.com/dzxxndbzu/image/upload/v1727585877/b2leh3am7ewcvqljq32y.jpg','Nike','Remera'),(5,'Remera Puma BMW Statement Hombre','La Remera Puma BMW Statement Hombre cuenta con un diseño moderno y detalles de la marca BMW y está confeccionada en algodón para una comodidad elegante.',64999,'Hombre','https://res.cloudinary.com/dzxxndbzu/image/upload/v1727585986/u7isfhinwsvvmf1eamt8.jpg','Puma','Remera'),(6,'Remera adidas Flames Logo para Hombre','Haz una declaración de moda con la Remera adidas Flames Logo Hombre que irradia audacia. Presenta un llamativo diseño con el logo en llamas que cubre todo el Trifolio, ideal para lucir bajo una campera o por sí sola. Fabricada totalmente en algodón y con un corte holgado, te garantiza comodidad en cualquier ocasión. Preparada para destacar, esta remera refleja seguridad y determinación.',50999,'Hombre','https://res.cloudinary.com/dzxxndbzu/image/upload/v1727586039/xddkjzc9c1ogqljefggz.jpg','Adidas','Remera'),(7,'Remera Nike M90 6mo Futura Hombre','Con un diseño clásico e impecable, la Remera Nike M90 6mo Futura Hombre posee un algodón de densidad media que cuenta con un estilo más holgado en los hombros, el pecho y el cuerpo para que puedas moverte y usarla encima de otras prendas con facilidad. Los nuevos gráficos de Nike mantienen tu estilo.',63999,'Hombre','https://res.cloudinary.com/dzxxndbzu/image/upload/v1727586129/t3pbyt4q5b98zjxbk9lu.jpg','Nike','Remera');
 /*!40000 ALTER TABLE `producto` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -383,6 +383,34 @@ CREATE TABLE `soportecliente` (
 LOCK TABLES `soportecliente` WRITE;
 /*!40000 ALTER TABLE `soportecliente` DISABLE KEYS */;
 /*!40000 ALTER TABLE `soportecliente` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `stock`
+--
+
+DROP TABLE IF EXISTS `stock`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `stock` (
+  `ID` int NOT NULL AUTO_INCREMENT,
+  `ProductoID` int DEFAULT NULL,
+  `Talle` varchar(10) DEFAULT NULL,
+  `Stock` int DEFAULT NULL,
+  PRIMARY KEY (`ID`),
+  KEY `ProductoID` (`ProductoID`),
+  CONSTRAINT `stock_ibfk_1` FOREIGN KEY (`ProductoID`) REFERENCES `producto` (`ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `stock`
+--
+
+LOCK TABLES `stock` WRITE;
+/*!40000 ALTER TABLE `stock` DISABLE KEYS */;
+INSERT INTO `stock` VALUES (1,1,'M',20),(2,1,'L',20);
+/*!40000 ALTER TABLE `stock` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -454,4 +482,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-09-27 14:19:02
+-- Dump completed on 2024-09-30 13:42:21
