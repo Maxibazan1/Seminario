@@ -28,7 +28,7 @@ CREATE TABLE `carrito` (
   PRIMARY KEY (`ID`),
   UNIQUE KEY `UsuarioID` (`UsuarioID`),
   CONSTRAINT `fk_usuario_carrito` FOREIGN KEY (`UsuarioID`) REFERENCES `usuario` (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -37,6 +37,7 @@ CREATE TABLE `carrito` (
 
 LOCK TABLES `carrito` WRITE;
 /*!40000 ALTER TABLE `carrito` DISABLE KEYS */;
+INSERT INTO `carrito` VALUES (1,1);
 /*!40000 ALTER TABLE `carrito` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -52,12 +53,13 @@ CREATE TABLE `carrito_producto` (
   `CarritoID` int DEFAULT NULL,
   `ProductoID` int DEFAULT NULL,
   `Cantidad` int DEFAULT NULL,
+  `Talle` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`ID`),
   KEY `fk_carrito_carrito_producto` (`CarritoID`),
   KEY `fk_producto_carrito_producto` (`ProductoID`),
   CONSTRAINT `fk_carrito_carrito_producto` FOREIGN KEY (`CarritoID`) REFERENCES `carrito` (`ID`),
   CONSTRAINT `fk_producto_carrito_producto` FOREIGN KEY (`ProductoID`) REFERENCES `producto` (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -66,6 +68,7 @@ CREATE TABLE `carrito_producto` (
 
 LOCK TABLES `carrito_producto` WRITE;
 /*!40000 ALTER TABLE `carrito_producto` DISABLE KEYS */;
+INSERT INTO `carrito_producto` VALUES (9,1,1,1,'S');
 /*!40000 ALTER TABLE `carrito_producto` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -400,7 +403,7 @@ CREATE TABLE `stock` (
   PRIMARY KEY (`ID`),
   KEY `ProductoID` (`ProductoID`),
   CONSTRAINT `stock_ibfk_1` FOREIGN KEY (`ProductoID`) REFERENCES `producto` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -409,7 +412,7 @@ CREATE TABLE `stock` (
 
 LOCK TABLES `stock` WRITE;
 /*!40000 ALTER TABLE `stock` DISABLE KEYS */;
-INSERT INTO `stock` VALUES (1,1,'M',20),(2,1,'L',20);
+INSERT INTO `stock` VALUES (1,1,'S',29),(2,1,'M',35),(3,1,'L',40),(4,1,'XL',35),(5,2,'S',25),(6,2,'M',25),(7,2,'L',30),(8,2,'XL',35),(9,3,'S',20),(10,3,'M',15);
 /*!40000 ALTER TABLE `stock` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -469,7 +472,7 @@ CREATE TABLE `usuario` (
 
 LOCK TABLES `usuario` WRITE;
 /*!40000 ALTER TABLE `usuario` DISABLE KEYS */;
-INSERT INTO `usuario` VALUES (1,'Maximiliano','Bazan','fmbazan@institutosanmartin.edu.ar','123','MaxiBazan1',NULL,NULL,'activo'),(2,'Felix','Bazan','bazanmaximiliano15@gmail.com','123','FxBazan',NULL,NULL,'activo');
+INSERT INTO `usuario` VALUES (1,'Maximiliano','Bazan','fmbazan@institutosanmartin.edu.ar','1234','MaxiBazan1',NULL,NULL,'activo'),(2,'Felix','Bazan','bazanmaximiliano15@gmail.com','123','FxBazan',NULL,NULL,'activo');
 /*!40000 ALTER TABLE `usuario` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -482,4 +485,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-09-30 13:42:21
+-- Dump completed on 2024-10-01 22:40:15

@@ -15,22 +15,22 @@
 <body>
     <header id="header">
         <div id="logo">
-            <a href="index.html">
-                <img src="Imagenes/logo.png" alt="Logo" id="logo">
+            <a href="indexSesionIniciada.html">
+                <img src="Imagenes/logo.png" id="logo">
             </a>
-        </div>        
+        </div>
         <div id="buscador">
             <form action="" method="get">
                 <input type="text" id="barra_buscador" name="busqueda" placeholder="Buscar">
             </form>
         </div>
         <div id="iconos">
-            <a href="login.html">
-                <img src="Imagenes/usuario.png">
-            </a>
-            <a href="carrito.html">
-                <img src="Imagenes/carrito.png">
-            </a>
+                <a href="perfil.html">
+                    <img src="Imagenes/usuario.png">
+                </a>
+                <a href="carrito.html">
+                    <img src="Imagenes/carrito.png">
+                </a>
         </div>
     </header>
     <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-lg">
@@ -63,70 +63,81 @@
             </div>
         </div>
     </nav>
+    <section id="banner-envio">
+        <p>Envío gratis a partir de $120.000</p>
+    </section>
+    <div id="carouselExampleControls" class="carousel slide">
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <img class="d-block w-100" src="Imagenes/nike.jpg" alt="First slide">
+          </div>
+          <div class="carousel-item">
+            <img class="d-block w-100" src="Imagenes/adidas.jpg" alt="Second slide">
+          </div>
+          <div class="carousel-item">
+            <img class="d-block w-100" src="Imagenes/puma.jpg" alt="Third slide">
+          </div>
+        </div>
+        <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </a>
+    </div>
     <br>
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-3 col-md-6 col-sm-12">
-                <h2 class="h4 pb-3">Filtrar por</h2>
-    
-                <div class="mb-4">
-                    <h5>Tipo de Producto</h5>
-                    <select class="form-select" id="filtroTipoProducto">
-                        <option value=''>Todos</option>
-                        <option value='Remera'>Remera</option>
-                        <option value='Pantalon'>Pantalón</option>
-                        <option value='Buzo'>Buzo</option>
-                    </select>
-                </div>
-    
-                <div class="mb-4">
-                    <h5>Género</h5>
-                    <ul class="list-unstyled">
-                        <li><input type="radio" name="filtroGenero" value='Hombre'>Hombre</li>
-                        <li><input type="radio" name="filtroGenero" value='Mujer'> Mujer</li>
-                        <li><input type="radio" name="filtroGenero" value='' checked> Todos</li>
-                    </ul>
-                </div>
-    
-                <div class="mb-4">
-                    <h5>Marca</h5>
-                    <select class="form-select" id="filtroMarca">
-                        <option value=''>Todas las marcas</option>
-                        <option value='Nike'>Nike</option>
-                        <option value='Adidas'>Adidas</option>
-                        <option value='Puma'>Puma</option>
-                    </select>
-                </div>
-    
-                <div class="mb-4">
-                    <h5>Talle</h5>
-                    <select class="form-select" id="filtroTalle">
-                        <option value=''>Todos los talles</option>
-                        <option value='S'>S</option>
-                        <option value='M'>M</option>
-                        <option value='L'>L</option>
-                        <option value='XL'>XL</option>
-                    </select>
-                </div>
-    
-                <div class="mb-4">
-                    <h5>Precio</h5>
-                    <input type="range" class="form-range" id="filtroPrecio" min="20000" max="150000" step="100" value="5000" 
-                        oninput="document.getElementById('precioMax').innerText = this.value;">
-                    <p style="color: black;">Hasta: $<span id="precioMax">5000</span></p>
-                </div>
-                <button class="btn btn-primary w-100" id="btnAplicarFiltros">Aplicar Filtros</button>
+    <hr class="custom-hr">
+    <br>
+    <h2>Recomendaciones</h2>
+    <div class="owl-carousel owl-theme">
+        <div class="item">
+            <div class="producto-info">
+                <img src="Imagenes/buzopuma.jpg" alt="Buzo puma">
+                <h4>Buzo puma</h4>
+                <p>$85.000</p>
             </div>
-    
-            <div class="col-lg-9 col-md-6 col-sm-12">
-                <div class="row" id="contenedorproductos">
-                    <!-- Aquí se insertan los productos dinamicamente -->
-                </div>
+        </div>
+        <div class="item">
+            <div class="producto-info">
+                <img src="Imagenes/camperanike.jpg" alt="Campera nike">
+                <h4>Campera nike</h4>
+                <p>$120.000</p>
+            </div>
+        </div>
+        <div class="item">
+            <div class="producto-info">
+                <img src="Imagenes/zapatillasadidas.jpg" alt="Zapatillas adidas">
+                <h4>Zapatillas adidas</h4>
+                <p>$125.000</p>
+            </div>
+        </div>
+        <div class="item">
+            <div class="producto-info">
+                <img src="Imagenes/zapatillasnike.jpg" alt="Zapatillas nike">
+                <h4>Zapatillas nike</h4>
+                <p>$150.000</p>
             </div>
         </div>
     </div>
-    
-    
+    <br>
+    <hr class="custom-hr">
+    <br>
+    <div id="banner-promocion" class="container my-5">
+        <div class="row align-items-center p-5 bg-light border rounded-2">
+            <div class="col-md-6">
+                <img src="Imagenes/promocion.jpg" alt="Promoción" class="img-fluid rounded-3">
+            </div>
+            <div class="col-md-6 text-center text-md-start">
+                <h1 class="display-4">¡OFERTA ESPECIAL PARA VOS!</h1>
+                <p class="lead">Aprovecha el 2X1 en productos seleccionados.</p>
+                <hr class="my-4">
+                <p>Solo por tiempo limitado. ¡No te lo pierdas!</p>
+                <a class="btn btn-primary btn-lg" href="#" role="button">Ver Ofertas</a>
+            </div>
+        </div>
+    </div>
     <br>
     <footer id="footer">
         <div class="container">
@@ -137,11 +148,11 @@
                     <p><strong>Teléfono:</strong> +54 383 4809258</p>
                     <p><strong>Email:</strong> razercontact@gmail.com</p>
                 </div>
-                <div class="col-md-4 mb-3">
+                    <div class="col-md-4 mb-3">
                     <h5 class="text-uppercase">Ubicación</h5>
                     <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d3507.373783209069!2d-65.7789584822012!3d-28.468287882746573!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1ses-419!2sar!4v1724608716111!5m2!1ses-419!2sar" width="100%" height="200" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                 </div>
-                <div class="col-md-4 mb-3">
+                    <div class="col-md-4 mb-3">
                     <h5 class="text-uppercase">Seguinos</h5>
                     <div id="social-icons" class="d-flex">
                         <a href="" class="text-white me-3"><i class="fa-brands fa-facebook fa-2x"></i></a>
@@ -160,6 +171,27 @@
     
     <script src="js/main.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    $(document).ready(function(){
+        $('.owl-carousel').owlCarousel({
+            loop:true,
+            margin:10,
+            nav:true,
+            responsive:{
+                0:{
+                    items:1
+                },
+                600:{
+                    items:3
+                },
+                1000:{
+                    items:5
+                }
+            }
+        });
+    });
+    </script>
 </body>
 </html>

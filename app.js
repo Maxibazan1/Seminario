@@ -610,6 +610,243 @@ ServidorWeb.get('/obtenerTallesYStock/:productoID', async (req, res) => {
   }
 });
 
+/*CARRITO*/
+ServidorWeb.post('/agregarCarrito', (req, res) => {
+  const { productoID, cantidad, talla } = req.body;
+
+  // Validar los campos necesarios
+  if (!productoID || !cantidad || !talla) {
+      return res.status(400).json({
+          result_estado: 'error',
+          result_message: 'Por favor, complete todos los campos (productoID, cantidad y talla).',
+          result_data: ''
+      });
+  }
+
+  const usuarioID = req.session.userId; // Obtén el usuarioID de la sesión
+
+  // Verificar si el usuario está autenticado
+  if (!usuarioID) {
+      return res.status(401).json({ result_estado: 'error', result_message: 'Usuario no autenticado' });
+  }
+
+  // Verificar si el carrito del usuario ya existe
+  connection.query('SELECT * FROM carrito WHERE UsuarioID = ?', [usuarioID], (err, carrito) => {
+      if (err) {
+          console.error('Error al consultar el carrito:', err);
+          return res.status(500).json({ result_estado: 'error', result_message: 'Error al consultar el carrito' });
+      }
+
+      let carritoID;
+      if (carrito.length === 0) {
+          // Si no existe, crear un nuevo carrito
+          connection.query('INSERT INTO carrito (UsuarioID) VALUES (?)', [usuarioID], (err, result) => {
+              if (err) {
+                  console.error('Error al crear el carrito:', err);
+                  return res.status(500).json({ result_estado: 'error', result_message: 'Error al crear el carrito' });
+              }
+              carritoID = result.insertId; // Obtener el ID del carrito recién creado
+              agregarProductoAlCarrito(carritoID, productoID, cantidad, talla, res);
+          });
+      } else {
+          carritoID = carrito[0].ID; // Obtener el ID del carrito existente
+          agregarProductoAlCarrito(carritoID, productoID, cantidad, talla, res);
+      }
+  });
+});
+
+// Función para agregar o actualizar el producto en el carrito
+const agregarProductoAlCarrito = (carritoID, productoID, cantidad, talla, res) => {
+
+  // Verificar si hay suficiente stock del producto y talle seleccionado
+  connection.query('SELECT Stock FROM stock WHERE ProductoID = ? AND Talle = ?', [productoID, talla], (err, result) => {
+      if (err) {
+          console.error('Error al consultar el stock:', err);
+          return res.status(500).json({ result_estado: 'error', result_message: 'Error al consultar el stock' });
+      }
+
+      const stockDisponible = result[0].Stock;
+
+      // Verificar si hay suficiente stock disponible
+      if (stockDisponible < cantidad) {
+          return res.status(400).json({ result_estado: 'error', result_message: 'No hay suficiente stock disponible' });
+      }
+
+      // Verificar si el producto ya está en el carrito
+      connection.query('SELECT COUNT(*) AS count FROM carrito_producto WHERE CarritoID = ? AND ProductoID = ? AND Talle = ?', [carritoID, productoID, talla], (err, result) => {
+          if (err) {
+              console.error('Error al consultar el producto en el carrito:', err);
+              return res.status(500).json({ result_estado: 'error', result_message: 'Error al consultar el producto en el carrito' });
+          }
+
+          const count = result[0].count;
+          if (count > 0) {
+              // Si ya existe, actualizar la cantidad en el carrito y restar el stock
+              connection.query('UPDATE carrito_producto SET Cantidad = Cantidad + ? WHERE CarritoID = ? AND ProductoID = ? AND Talle = ?', [cantidad, carritoID, productoID, talla], (err) => {
+                  if (err) {
+                      console.error('Error al actualizar el producto en el carrito:', err);
+                      return res.status(500).json({ result_estado: 'error', result_message: 'Error al actualizar el producto en el carrito' });
+                  }
+
+                  // Restar el stock disponible
+                  restarStock(productoID, talla, cantidad, res);
+              });
+          } else {
+              // Si no existe, agregar el producto al carrito y restar el stock
+              connection.query('INSERT INTO carrito_producto (CarritoID, ProductoID, Cantidad, Talle) VALUES (?, ?, ?, ?)', [carritoID, productoID, cantidad, talla], (err) => {
+                  if (err) {
+                      console.error('Error al agregar el producto al carrito:', err);
+                      return res.status(500).json({ result_estado: 'error', result_message: 'Error al agregar producto al carrito' });
+                  }
+
+                  // Restar el stock disponible
+                  restarStock(productoID, talla, cantidad, res);
+              });
+          }
+      });
+  });
+};
+
+const restarStock = (productoID, talla, cantidad, res) => {
+  connection.query('UPDATE stock SET Stock = Stock - ? WHERE ProductoID = ? AND Talle = ?', [cantidad, productoID, talla], (err) => {
+      if (err) {
+          console.error('Error al actualizar el stock:', err);
+          return res.status(500).json({ result_estado: 'error', result_message: 'Error al actualizar el stock' });
+      }
+
+      res.json({ result_estado: 'ok', message: 'Producto agregado al carrito y stock actualizado' });
+  });
+};
+
+
+
+
+ServidorWeb.get('/obtenerCarrito', (req, res) => {
+  // Verifica si el usuario está autenticado
+  if (!req.session.userId) {
+      return res.status(401).json({ error: 'Usuario no autenticado' });
+  }
+
+  const usuarioId = req.session.userId; // Obtén el ID del usuario de la sesión
+
+  const consulta = `
+      SELECT cp.ID, cp.Cantidad, cp.Talle, p.Nombre, p.Precio, p.ImagenUrl
+      FROM carrito_producto cp
+      JOIN carrito c ON cp.CarritoID = c.ID
+      JOIN producto p ON cp.ProductoID = p.ID
+      JOIN stock s ON cp.ProductoID = s.ProductoID AND cp.Talle = s.Talle
+      WHERE c.UsuarioID = ?
+  `;
+
+  connection.query(consulta, [usuarioId], (error, resultados) => {
+      if (error) {
+          return res.status(500).json({ error: 'Error al obtener los productos del carrito' });
+      }
+      res.json(resultados);
+  });
+});
+
+
+ServidorWeb.delete('/eliminarProducto', (req, res) => {
+  const productoID = req.body.id;
+  
+  // Obtener la cantidad y talla del producto antes de eliminarlo
+  connection.query(
+      'SELECT Cantidad, Talle, ProductoID FROM carrito_producto WHERE ID = ?',
+      [productoID],
+      (err, result) => {
+          if (err) {
+              console.error('Error al obtener detalles del producto antes de eliminarlo:', err);
+              return res.status(500).json({ error: 'Error al obtener detalles del producto' });
+          }
+
+          if (result.length === 0) {
+              return res.status(404).json({ error: 'Producto no encontrado en el carrito' });
+          }
+
+          const { Cantidad, Talle, ProductoID } = result[0];
+
+          // Devolver el stock al inventario
+          connection.query(
+              'UPDATE stock SET Stock = Stock + ? WHERE ProductoID = ? AND Talle = ?',
+              [Cantidad, ProductoID, Talle],
+              (err) => {
+                  if (err) {
+                      console.error('Error al actualizar el stock:', err);
+                      return res.status(500).json({ error: 'Error al actualizar el stock' });
+                  }
+
+                  // Eliminar el producto del carrito
+                  connection.query(
+                      'DELETE FROM carrito_producto WHERE ID = ?',
+                      [productoID],
+                      (err) => {
+                          if (err) {
+                              console.error('Error al eliminar producto del carrito:', err);
+                              return res.status(500).json({ error: 'Error al eliminar producto del carrito' });
+                          }
+
+                          res.json({ result_estado: 'ok', result_message: 'Producto eliminado del carrito y stock actualizado correctamente' });
+                      }
+                  );
+              }
+          );
+      }
+  );
+});
+
+ServidorWeb.post('/filtrarProductos', (req, res) => {
+  const { tipoProducto, genero, marca, talle, precioMax } = req.body;
+
+  console.log('Filtros recibidos:', req.body);
+
+  // Establecer un precio máximo alto por defecto si no se pasa ningún precio
+  const precioMaximo = precioMax || 999999;
+
+  // Consulta base, utilizando DISTINCT para evitar duplicados
+  let consulta = `SELECT DISTINCT p.* FROM producto p JOIN stock s ON p.ID = s.ProductoID WHERE p.Precio <= ?`;
+  let valores = [precioMaximo];
+
+  // Solo agregar filtros si tienen valores válidos
+  if (tipoProducto && tipoProducto !== "") {
+      consulta += ' AND p.Tipo = ?';
+      valores.push(tipoProducto);
+  }
+  if (genero && genero !== "") {
+      consulta += ' AND p.Genero = ?';
+      valores.push(genero);
+  }
+  if (marca && marca !== "") {
+      consulta += ' AND p.Marca = ?';
+      valores.push(marca);
+  }
+  if (talle && talle !== "") {
+      consulta += ' AND s.Talle = ?';
+      valores.push(talle);
+  }
+
+  console.log('Consulta SQL generada:', consulta); // Ver la consulta generada
+
+  // Ejecutar la consulta SQL
+  connection.query(consulta, valores, (err, resultados) => {
+      if (err) {
+          console.error('Error al filtrar productos:', err);
+          return res.status(500).json({ error: 'Error al filtrar productos' });
+      }
+
+      if (resultados.length === 0) {
+          console.log('No se encontraron productos para los filtros aplicados');
+      } else {
+          console.log('Resultados obtenidos:', resultados); // Ver los resultados obtenidos
+      }
+
+      res.json({ result_data: resultados });
+  });
+});
+
+
+
+
 
 
 

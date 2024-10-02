@@ -69,7 +69,7 @@
                 <!-- Imagen producto -->
                 <div class="col-lg-5 mb-4">
                     <div class="card" style="border: 3px solid rgb(255, 255, 255); box-shadow: 0 4px 20px rgb(170, 170, 170);">
-                        <img class="img-fluid rounded" src="" alt="Imagen del producto" id="product-detail" style="object-fit: cover;">
+                        <img class="img-fluid rounded" src="" alt="Imagen del producto" id="imagenProducto" style="object-fit: cover;">
                         <div class="card-body text-center">
                             <div class="text-warning">
                                 <i class="fa fa-star"></i>
@@ -86,8 +86,8 @@
                 <div class="col-lg-7">
                     <div class="card" style="border: 3px solid rgb(255, 255, 255); box-shadow: 0 4px 20px rgb(170, 170, 170);">
                         <div class="card-body">
-                            <h1 class="h2 mb-3" id="product-name"></h1>
-                            <h3 class="text mb-4" style="color: #0D0638;" id="product-price"></h3>
+                            <h1 class="h2 mb-3" id="nombreProducto"></h1>
+                            <h3 class="text mb-4" style="color: #0D0638;" id="precioProducto"></h3>
                             <!-- Descripcion -->
                             <div class="accordion mb-3" id="descripcion-accordion">
                                 <div class="accordion-item">
@@ -98,24 +98,23 @@
                                     </h2>
                                     <div id="descripcion-collapse" class="accordion-collapse collapse" aria-labelledby="descripcion-heading">
                                         <div class="accordion-body">
-                                            <p style="color: black;" id="product-description"></p>
+                                            <p style="color: black;" id="descripcionProducto"></p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <!-- Talles y Stock -->
-                            <form action="" method="GET">
+                            <form>
                                 <div class="row">
                                     <h4>Talle</h4>
-
-                                    <div class="col-12 mb-3" id="talles-y-stock">
+                                    <div class="col-12 mb-3" id="talle">
                                         <div class="d-flex justify-content-center align-items-center gap-2">
                                             <div class="d-flex justify-content-center align-items-center gap-2">
-                                                <!-- Botones de talles y stock se generarán dinámicamente -->
+                                                <!-- Los botones de talles y stock se generarán aquí -->
                                             </div>
                                         </div>
                                     </div>
-
+                    
                                     <!-- Cantidad -->
                                     <div class="col-12 mb-4 text-center">
                                         <h4>Cantidad</h4>
@@ -128,7 +127,7 @@
                                 </div>
                                 <!-- Agregar al carrito -->
                                 <div class="col-12 text-center">
-                                    <button type="submit" class="btn btn-primary w-auto" style="background-color: #0D0638; border: none;">Agregar al carrito</button>
+                                    <button id="BtnAgregarCarrito" type="button" class="btn btn-primary w-auto" style="background-color: #0D0638; border: none;">Agregar al carrito</button>
                                 </div>
                             </form>
                         </div>
