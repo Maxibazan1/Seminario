@@ -583,14 +583,14 @@ async function cargarProducto() {
                 if (resultTallesYStock.result_estado === 'ok') {
                     const tallesYStock = resultTallesYStock.result_data;
 
-                    tallesYStockContainer.innerHTML = ''; // Limpiar el contenedor antes de agregar los datos
+                    tallesYStockContainer.innerHTML = ''; 
 
                     if (tallesYStock.length > 0) {
                         // Agregar botones de tallas
                         tallesYStock.forEach(talleYStock => {
                             const button = document.createElement('button');
                             button.type = 'button';
-                            button.className = 'btn btn-outline-dark';
+                            button.className = 'btn btn-outline-dark m-1';
                             button.innerText = `${talleYStock.Talle} - Stock: ${talleYStock.Stock}`;
 
                             // Evento para seleccionar la talla
@@ -649,7 +649,7 @@ async function cargarTablaProductos() {
 
 function mostrarTablaProductos() {
     const tbody = document.getElementById('productos-tbody');
-    tbody.innerHTML = ''; // Limpiar contenido anterior
+    tbody.innerHTML = '';
 
     // Calcular el índice de inicio y fin de los productos para la página actual
     const inicio = (paginaActual - 1) * productosPorPagina;
@@ -1033,7 +1033,7 @@ document.getElementById('btnAplicarFiltros').addEventListener('click', () => {
         return response.json();
     })
     .then(data => {
-        cargarProductos(data.result_data);  // Mostrar productos filtrados
+        cargarProductos(data.result_data);
     })
     .catch(error => {
         console.error('Error al filtrar productos:', error);

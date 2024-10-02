@@ -1,29 +1,8 @@
 /*CONEXIONES*/
-const Mailjet = require('node-mailjet');
-
-// Mailjet
 const mailjet = new Mailjet({
   apiKey: 'ab2d2cee5a35da44e0d926674bdbd36a',
   apiSecret: 'c634830f2aca5c0ee4ebdfe2ee9eafd8'
 });
-
-const session = require('express-session');
-const express = require('express');
-const path = require('path');
-const mysql = require('mysql2');
-const crypto = require('crypto');
-
-const ServidorWeb = express();
-const port = 3000;
-
-ServidorWeb.use(express.static(path.join(__dirname, 'Frontend')));
-ServidorWeb.use(express.json());
-ServidorWeb.use(express.urlencoded({ extended: false }));
-
-
-const multer = require('multer');
-const upload = multer({ dest: 'uploads/' }); // carpeta temporal para subir imAgenes
-const cloudinary = require('cloudinary').v2;
 
 cloudinary.config({
   cloud_name: 'dzxxndbzu',
@@ -31,13 +10,32 @@ cloudinary.config({
   api_secret: 'qsjuIzTP-MrDzqNX0JakC6u-ss0'
 });
 
-
 ServidorWeb.use(session({
   secret: 'tu_secreto_aqui',
   resave: false,
   saveUninitialized: true,
   cookie: { secure: false } 
 }));
+
+const ServidorWeb = express();
+const session = require('express-session');
+const express = require('express');
+const path = require('path');
+const mysql = require('mysql2');
+const port = 3000;
+const crypto = require('crypto');
+const Mailjet = require('node-mailjet');
+const cloudinary = require('cloudinary').v2;
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/' }); // carpeta temporal para subir imAgenes
+
+
+
+ServidorWeb.use(express.static(path.join(__dirname, 'Frontend')));
+ServidorWeb.use(express.json());
+ServidorWeb.use(express.urlencoded({ extended: false }));
+
+
 
 // Conexión a la base de datos
 const connection = mysql.createConnection({
@@ -56,9 +54,11 @@ connection.connect((err) => {
 });
 
 
+
 //////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////// /*ENDPOINT*/ //////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
+
 
 
 /*NUEVO USUARIO*/	
@@ -151,6 +151,8 @@ ServidorWeb.post('/nuevousuario', async (req, res) => {
 });
 
 
+
+/*CONFIRMAR CUENTA*/
 ServidorWeb.get('/confirmar-cuenta', async (req, res) => {
   const { userId } = req.query;
 
@@ -188,6 +190,7 @@ ServidorWeb.get('/confirmar-cuenta', async (req, res) => {
 });
 
 
+
 /*MOSTRAR LOS USUARIOS*/
 ServidorWeb.get('/mostrarusuarios', (req, res) => {
   const sql = 'SELECT ID, Nombre, Apellido, NombreUsuario, Email, Estado FROM usuario';
@@ -205,6 +208,7 @@ ServidorWeb.get('/mostrarusuarios', (req, res) => {
     res.json(results);
   });
 });
+
 
 
 /*OBTENER USUARIO*/
@@ -299,6 +303,7 @@ ServidorWeb.post('/login', (req, res) => {
 });
 
 
+
 /*RECUPERAR CONTRASEÑA*/
 ServidorWeb.post('/recuperarcontrasena', async (req, res) => {
   const { email } = req.body;
@@ -373,6 +378,7 @@ ServidorWeb.post('/recuperarcontrasena', async (req, res) => {
 });
 
 
+
 /*CAMBIAR CONTRASEÑA*/
 ServidorWeb.post('/cambiarcontrasena', async (req, res) => {
   try {
@@ -414,6 +420,8 @@ ServidorWeb.post('/cambiarcontrasena', async (req, res) => {
   }
 
 });
+
+
 
 /*INSERTAR PRODUCTO*/
 ServidorWeb.post('/insertarproducto', upload.single('imagen'), async (req, res) => {
@@ -463,6 +471,8 @@ ServidorWeb.post('/insertarproducto', upload.single('imagen'), async (req, res) 
 });
 
 
+
+/*OBTENER PRODUCTOS*/
 ServidorWeb.get('/obtenerproductos', async (req, res) => {
   try {
       const sql = 'SELECT * FROM producto';
@@ -482,6 +492,8 @@ ServidorWeb.get('/obtenerproductos', async (req, res) => {
       });
   }
 });
+
+
 
 /*MOSTRAR PRODUCTO POR ID*/
 ServidorWeb.get('/producto/:id', async (req, res) => {
@@ -511,6 +523,8 @@ ServidorWeb.get('/producto/:id', async (req, res) => {
       });
   }
 });
+
+
 
 /*AGREGAR TALLES Y STOCK*/
 ServidorWeb.post('/agregarTalleyStock', async (req, res) => {
@@ -568,6 +582,7 @@ ServidorWeb.post('/agregarTalleyStock', async (req, res) => {
 });
 
 
+
 /*MOSTRAR TALLES Y STOCK*/ 
 ServidorWeb.get('/obtenerTallesYStock/:productoID', async (req, res) => {
   const { productoID } = req.params;
@@ -609,6 +624,8 @@ ServidorWeb.get('/obtenerTallesYStock/:productoID', async (req, res) => {
       });
   }
 });
+
+
 
 /*CARRITO*/
 ServidorWeb.post('/agregarCarrito', (req, res) => {
@@ -720,7 +737,6 @@ const restarStock = (productoID, talla, cantidad, res) => {
 
 
 
-
 ServidorWeb.get('/obtenerCarrito', (req, res) => {
   // Verifica si el usuario está autenticado
   if (!req.session.userId) {
@@ -745,6 +761,7 @@ ServidorWeb.get('/obtenerCarrito', (req, res) => {
       res.json(resultados);
   });
 });
+
 
 
 ServidorWeb.delete('/eliminarProducto', (req, res) => {
@@ -795,6 +812,8 @@ ServidorWeb.delete('/eliminarProducto', (req, res) => {
   );
 });
 
+
+
 ServidorWeb.post('/filtrarProductos', (req, res) => {
   const { tipoProducto, genero, marca, talle, precioMax } = req.body;
 
@@ -803,7 +822,7 @@ ServidorWeb.post('/filtrarProductos', (req, res) => {
   // Establecer un precio máximo alto por defecto si no se pasa ningún precio
   const precioMaximo = precioMax || 999999;
 
-  // Consulta base, utilizando DISTINCT para evitar duplicados
+  // Consulta base utilizando DISTINCT para evitar duplicados
   let consulta = `SELECT DISTINCT p.* FROM producto p JOIN stock s ON p.ID = s.ProductoID WHERE p.Precio <= ?`;
   let valores = [precioMaximo];
 
@@ -825,8 +844,6 @@ ServidorWeb.post('/filtrarProductos', (req, res) => {
       valores.push(talle);
   }
 
-  console.log('Consulta SQL generada:', consulta); // Ver la consulta generada
-
   // Ejecutar la consulta SQL
   connection.query(consulta, valores, (err, resultados) => {
       if (err) {
@@ -837,15 +854,12 @@ ServidorWeb.post('/filtrarProductos', (req, res) => {
       if (resultados.length === 0) {
           console.log('No se encontraron productos para los filtros aplicados');
       } else {
-          console.log('Resultados obtenidos:', resultados); // Ver los resultados obtenidos
+          console.log('Resultados obtenidos:', resultados);
       }
 
       res.json({ result_data: resultados });
   });
 });
-
-
-
 
 
 
